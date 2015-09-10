@@ -6,6 +6,7 @@ var perfil = require('../model/perfis');
 routerPerfil.route('/all')
 
       .get(function(req,res){
+
              perfil = mongoose.model('Perfil');
              perfil.find().sort({'descricao': 1}).exec(function(err, perfil) {
                     if (err)
@@ -55,8 +56,11 @@ routerPerfil.route('/:descricao')
                     perfil.remove({descricao: descricao}, function(err,perfil){
                         if (err)
                               res.send(err);
-                        if (perfil != null)
+                        if (perfil != null) {
                             res.json({message: "Perfil excluído com sucesso!!"});
+                        } else {
+                            res.json({message: "Perfil não encontrado!!"});
+                        }
                     });
              } else {
                    res.json({message: "Não foi possível apagar a descrição de Perfil!!"});
