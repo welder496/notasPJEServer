@@ -115,12 +115,16 @@ routerFuncionalidade.route('/:descricao/:subtipo/to/:newsubtipo')
             if (typeof(descricao) != "undefined" && typeof(subtipo) != "undefined" && typeof(newsubtipo) != "undefined") {
                   funcionalidade = mongoose.model('Funcionalidade');
                   funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
-                          funcionalidade.subtipos.splice(funcionalidade.subtipos.indexOf(subtipo),1,newsubtipo);
-                          funcionalidade.save(function(err){
-                                if (err)
-                                      res.send(err);
-                          });
-                         res.json({message: "Subtipo da Funcionalidade atualizado com sucesso!!"});
+                          if (funcionalidade.subtipos.indexOf(subtipo) != -1) {
+                                funcionalidade.subtipos.splice(funcionalidade.subtipos.indexOf(subtipo),1,newsubtipo);
+                                funcionalidade.save(function(err){
+                                      if (err)
+                                             res.send(err);
+                                });
+                                res.json({message: "Subtipo da Funcionalidade atualizado com sucesso!!"});
+                          } else {
+                                res.json({message: "Subtipo não encontrado!!"});
+                          }
                   });
             } else {
                   res.json({message: "Não foi possível atualizar o subtipo da Funcionalidade!!"});
