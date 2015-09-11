@@ -87,8 +87,6 @@ router.get('/', function(req, res){
    res.json({message: 'Aplicação notasPJEServer está funcionando!!'});
 });
 
-console.log('Notas executando na porta ' + port);
-
 module.exports = app;
 
 /*End of Application
