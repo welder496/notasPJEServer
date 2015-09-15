@@ -105,6 +105,30 @@ routerFuncionalidade.route('/:descricao')
              }
       });
 
+routerFuncionalidade.route('/:descricao/to/:novaDescricao')
+
+      .put(function(req,res){
+             var descricao = req.params.descricao;
+             var novaDescricao = req.params.novaDescricao;
+
+             if (typeof(descricao) != "undefined" && typeof(novaDescricao) != "undefined") {
+                   funcionalidade = mongoose.model('Funcionalidade');
+                   funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
+                          if (typeof(novaDescricao) != "undefined") {
+                                funcionalidade.descricao = novaDescricao;
+                          }
+                          funcionalidade.save(function(err){
+                                if (err)
+                                       res.send(err);
+                          });
+                          res.json({message: "Descrição da funcionalidade atualizada com sucesso!!"});
+                   });
+             } else {
+                  res.json({message: "Não foi possível atualizar a descrição da Funcionalidade!!"});
+             }
+
+      });
+
 routerFuncionalidade.route('/:descricao/:subtipo/to/:newsubtipo')
 
       .put(function(req,res){
