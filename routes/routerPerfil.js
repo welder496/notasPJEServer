@@ -28,20 +28,24 @@ routerPerfil.route('/new')
 
                    var descricao = req.body.descricao;
 
-                   var Perfil = new perfil();
-                   Perfil.descricao = descricao;
+                   if (typeof(descricao) != "undefined" && descricao !="") {
+                          var Perfil = new perfil();
+                          Perfil.descricao = descricao;
 
-                   perfil.findOne({descricao: Perfil.descricao}, function(err, perfil){
-                        if (perfil != null) {
-                              res.json({message: "Perfil foi encontrado!!"});
-                        } else {
-                               Perfil.save(function(err){
-                                      if (err)
-                                             res.send(err);
-                               });
-                               res.json({message: "Perfil cadastrado com sucesso!!"});
-                         }
-                   });
+                          perfil.findOne({descricao: Perfil.descricao}, function(err, perfil){
+                                if (perfil != null) {
+                                      res.json({message: "Perfil foi encontrado!!"});
+                                } else {
+                                       Perfil.save(function(err){
+                                              if (err)
+                                                     res.send(err);
+                                       });
+                                       res.json({message: "Perfil cadastrado com sucesso!!"});
+                                 }
+                          });
+                   } else {
+                          res.json({message: "Descrição do Perfil não foi informada!!"});
+                   }
              } else {
                 res.json({message:"Não foi possível cadastrar a descrição de Perfil!!"});
              }
@@ -52,7 +56,7 @@ routerPerfil.route('/:descricao')
       .delete(function(req,res){
              perfil = mongoose.model('Perfil');
              var descricao = req.params.descricao;
-             if (descricao != "") {
+             if (descricao != "" && typeof(descricao) != "undefined") {
                     perfil.remove({descricao: descricao}, function(err,perfil){
                         if (err)
                               res.send(err);
@@ -72,7 +76,7 @@ routerPerfil.route('/:id')
       .delete(function(req,res){
              perfil = mongoose.model('Perfil');
              var id = req.params.id;
-             if (id != "") {
+             if (id != "" && typeof(id) != "undefined") {
                     perfil.remove({_id: id}, function(err,perfil){
                         if (err)
                               res.send(err);
@@ -94,7 +98,7 @@ routerPerfil.route('/:id/:descricao')
              perfil = mongoose.model('Perfil');
              var id = req.params.id;
              var descricao = req.params.descricao;
-             if (id != "" && descricao!="") {
+             if (id != "" && typeof(id) != "undefined" && typeof(descricao) != "undefined" && descricao!="") {
                     perfil.findOne({_id: id}, function(err,perfil){
                           if (err)
                                res.send(err);
