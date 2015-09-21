@@ -18,7 +18,7 @@ routerNotasNew.route('/')
                    var files = req.files;
                    var fileKeys = Object.keys(req.files);
                    fileKeys.forEach(function(key){
-                          var arquivo = files[key].originalname.replace(/[^a-zá-úÁ-Úâ-ûÂ-ÛA-Z0-9\-()\[\]\.]+/g,'_');
+                          var arquivo = files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-()\[\]\.]+/g,'_');
                           if (arquivo.substring(arquivo.lastIndexOf(".")).toLowerCase() != '.js')
                                 if (Notas.arquivos.indexOf(arquivo) == -1)
                                       Notas.arquivos.push(arquivo);
@@ -30,9 +30,7 @@ routerNotasNew.route('/')
                         if (notas != null){
                               res.json({message: "A nota já está cadastrada!!"});
                         } else
-                                if (typeof(Notas.codigo)!="undefined" &&
-                                      typeof(Notas.nota)!="undefined" &&
-                                      typeof(Notas.tags)!="undefined") {
+                               if (Notas.codigo != "" && Notas.nota != "undefined" && Notas.tags != "") {
 
                                 Notas.save(function(err) {
                                       if (err)
@@ -41,7 +39,7 @@ routerNotasNew.route('/')
                                              fs.mkdir(docs,function(err){
                                                    fs.mkdir(docs+'/'+Notas._id,function(err){
                                                          fileKeys.forEach(function(key){
-                                                                var arquivo = docs+'/'+Notas._id+'/'+files[key].originalname.replace(/[^a-zá-úÁ-Úâ-ûÂ-ÛA-Z0-9\-()\[\]\.]+/g,'_');
+                                                                var arquivo = docs+'/'+Notas._id+'/'+files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-()\[\]\.]+/g,'_');
                                                                 if (arquivo.substring(arquivo.lastIndexOf(".")).toLowerCase() != '.js') {
                                                                       var writeStream = fs.createWriteStream(arquivo);
                                                                       writeStream.write(files[key].buffer);

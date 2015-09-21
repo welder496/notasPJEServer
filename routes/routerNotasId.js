@@ -34,7 +34,7 @@ routerNotasId.route('/:nota_id')
                           var files = req.files;
                           var fileKeys = Object.keys(req.files);
                           fileKeys.forEach(function(key){
-                                var arquivo = files[key].originalname.replace(/[^a-zá-úÁ-Úâ-ûÂ-ÛA-Z0-9\-()\[\]\.]+/g,'_');
+                                var arquivo = files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-()\[\]\.]+/g,'_');
                                 if (arquivo.substring(arquivo.lastIndexOf(".")).toLowerCase() != '.js')
                                       if (notas.arquivos.indexOf(arquivo) == -1)
                                             notas.arquivos.push(arquivo);
@@ -45,9 +45,7 @@ routerNotasId.route('/:nota_id')
                           notas.versao.push(parseInt(req.body.versao)+1);
                           notas.versao.shift();
 
-                          if (typeof(notas.codigo)!="undefined" &&
-                              typeof(notas.nota)!="undefined" &&
-                              typeof(notas.tags)!="undefined") {
+                          if (notas.codigo != "" && notas.nota != "undefined" && notas.tags != "") {
 
                                        if (parseInt(req.body.versao) >= notas.__v) {
                                              notas.save(function(err) {
@@ -57,7 +55,7 @@ routerNotasId.route('/:nota_id')
                                                           fs.mkdir(docs,function(err){
                                                                  fs.mkdir(docs+'/'+notas._id,function(err){
                                                                        fileKeys.forEach(function(key){
-                                                                             var arquivo = docs+'/'+notas._id+'/'+files[key].originalname.replace(/[^a-zá-úÁ-Úâ-ûÂ-ÛA-Z0-9\-()\[\]\.]+/g,'_');
+                                                                             var arquivo = docs+'/'+notas._id+'/'+files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-()\[\]\.]+/g,'_');
                                                                              if (arquivo.substring(arquivo.lastIndexOf(".")).toLowerCase() != '.js') {
                                                                                    var writeStream = fs.createWriteStream(arquivo);
                                                                                    writeStream.write(files[key].buffer);

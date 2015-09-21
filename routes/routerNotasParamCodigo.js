@@ -149,7 +149,7 @@ routerNotasParamCodigo.route('/arquivo/:arquivo/info')
                         res.send(err);
                   if (notas != null){
                           if (fs.existsSync(docs)){
-                                var arquivo = docs+'/'+notas._id+'/'+req.params.arquivo.replace(/[^a-zá-úÁ-Úâ-ûÂ-ÛA-Z0-9\-()\[\]\.]+/g,'_');
+                                var arquivo = docs+'/'+notas._id+'/'+req.params.arquivo.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-()\[\]\.]+/g,'_');
                                 if (fs.existsSync(arquivo)){
                                       fs.stat(arquivo, function(err,stats){
                                              if (err)
