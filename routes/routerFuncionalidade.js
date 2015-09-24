@@ -69,17 +69,21 @@ routerFuncionalidade.route('/descricao/:descricao')
                  typeof(novaDescricao) != "undefined" && novaDescricao != "") {
                    funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
-                          funcionalidade.descricao = novaDescricao;
-                          subTipos.forEach(function(key){
-                                var subtipo = key;
-                                if (funcionalidade.subtipos.indexOf(subtipo) == -1)
-                                       funcionalidade.subtipos.push(subtipo);
-                          });
-                          funcionalidade.save(function(err){
-                                if (err)
-                                       res.send(err);
-                          });
-                          res.json({message: "Funcionalidade atualizada com sucesso!!"});
+                          if (funcionalidade != null) {
+                                funcionalidade.descricao = novaDescricao;
+                                subTipos.forEach(function(key){
+                                      var subtipo = key;
+                                      if (funcionalidade.subtipos.indexOf(subtipo) == -1)
+                                             funcionalidade.subtipos.push(subtipo);
+                                });
+                                funcionalidade.save(function(err){
+                                      if (err)
+                                             res.send(err);
+                                });
+                                res.json({message: "Funcionalidade atualizada com sucesso!!"});
+                          } else {
+                                res.json({message: "Não foi possível encontrar a Funcionalidade!!"});
+                          }
                    });
              } else {
                    res.json({message: "Não foi possível atualizar a Funcionalidade!!"});
@@ -115,12 +119,16 @@ routerFuncionalidade.route('/descricao/:descricao/to/:novaDescricao')
                  typeof(novaDescricao) != "undefined" && novaDescricao != "") {
                    funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
-                          funcionalidade.descricao = novaDescricao;
-                          funcionalidade.save(function(err){
-                                if (err)
-                                       res.send(err);
-                          });
-                          res.json({message: "Descrição da funcionalidade atualizada com sucesso!!"});
+                          if (funcionalidade != null) {
+                                funcionalidade.descricao = novaDescricao;
+                                funcionalidade.save(function(err){
+                                      if (err)
+                                             res.send(err);
+                                });
+                                res.json({message: "Descrição da funcionalidade atualizada com sucesso!!"});
+                          } else {
+                                res.json({message: "Não foi possível encontrar a Funcionalidade!!"});
+                          }
                    });
              } else {
                   res.json({message: "Não foi possível atualizar a descrição da Funcionalidade!!"});
@@ -140,15 +148,19 @@ routerFuncionalidade.route('/descricao/:descricao/subtipo/:subtipo/to/:newsubtip
                 typeof(newsubtipo) != "undefined" && newsubtipo != "") {
                   funcionalidade = mongoose.model('Funcionalidade');
                   funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
-                          if (funcionalidade.subtipos.indexOf(subtipo) != -1) {
-                                funcionalidade.subtipos.splice(funcionalidade.subtipos.indexOf(subtipo),1,newsubtipo);
-                                funcionalidade.save(function(err){
-                                      if (err)
-                                             res.send(err);
-                                });
-                                res.json({message: "Subtipo da Funcionalidade atualizado com sucesso!!"});
+                          if (funcionalidade != null) {
+                                if (funcionalidade.subtipos.indexOf(subtipo) != -1) {
+                                      funcionalidade.subtipos.splice(funcionalidade.subtipos.indexOf(subtipo),1,newsubtipo);
+                                      funcionalidade.save(function(err){
+                                            if (err)
+                                                   res.send(err);
+                                      });
+                                      res.json({message: "Subtipo da Funcionalidade atualizado com sucesso!!"});
+                                } else {
+                                      res.json({message: "Subtipo não encontrado!!"});
+                                }
                           } else {
-                                res.json({message: "Subtipo não encontrado!!"});
+                                res.json({message: "Não foi possível encontrar a Funcionalidade!!"});
                           }
                   });
             } else {
@@ -162,19 +174,23 @@ routerFuncionalidade.route('/descricao/:descricao/subtipo/:subtipo')
              var descricao = req.params.descricao;
              var subtipo = req.params.subtipo;
              if (typeof(descricao) != "undefined" && descricao != "" &&
-                 typeof(subtipo) != "undefined" && subtipo !="") {
+                 typeof(subtipo) != "undefined" && subtipo != "") {
                    funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
-                          if (funcionalidade.subtipos.indexOf(subtipo) == -1) {
-                                funcionalidade.subtipos.push(subtipo);
-                                funcionalidade.save(function(err){
-                                      if (err)
-                                            res.send(err);
-                                });
-                                res.json({message: "Subtipo adicionado com sucesso!!"});
-                         } else {
-                                res.json({message:"Subtipo já existe!!"});
-                         }
+                          if (funcionalidade != null) {
+                                if (funcionalidade.subtipos.indexOf(subtipo) == -1) {
+                                      funcionalidade.subtipos.push(subtipo);
+                                      funcionalidade.save(function(err){
+                                             if (err)
+                                                   res.send(err);
+                                      });
+                                      res.json({message: "Subtipo adicionado com sucesso!!"});
+                                } else {
+                                       res.json({message:"Subtipo já existe!!"});
+                                }
+                          } else {
+                                res.json({message: "Não foi possível encontrar a Funcionalidade!!"});
+                          }
                    });
              } else {
                     res.json({message: "Não foi possível adicionar subtipo à Funcionalidade!!"});
@@ -188,15 +204,19 @@ routerFuncionalidade.route('/descricao/:descricao/subtipo/:subtipo')
                  typeof(subtipo) != "undefined" && subtipo !="") {
                    funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
-                         if (funcionalidade.subtipos.indexOf(subtipo) != -1) {
-                                funcionalidade.subtipos.splice(funcionalidade.subtipos.indexOf(subtipo),1);
-                                funcionalidade.save(function(err){
-                                      if (err)
-                                             res.send(err);
-                                });
-                                res.json({message: "Subtipo excluído com sucesso!!"});
+                          if (funcionalidade != null) {
+                               if (funcionalidade.subtipos.indexOf(subtipo) != -1) {
+                                      funcionalidade.subtipos.splice(funcionalidade.subtipos.indexOf(subtipo),1);
+                                      funcionalidade.save(function(err){
+                                            if (err)
+                                                   res.send(err);
+                                      });
+                                      res.json({message: "Subtipo excluído com sucesso!!"});
+                                } else {
+                                      res.json({message:"Subtipo não existe!!"});
+                                }
                           } else {
-                                res.json({message:"Subtipo não existe!!"});
+                                res.json({message: "Não foi possível encontrar a Funcionalidade!!"});
                           }
                    });
              } else {
