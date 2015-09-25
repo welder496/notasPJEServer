@@ -7,7 +7,7 @@ routerNotasLike.route('/:nota')
 
     .get(function(req, res) {
 
-        var reqs = req.params.nota;
+        var reqs = decodeURIComponent(req.params.nota);
 
         search = new RegExp(reqs,'ig');
 

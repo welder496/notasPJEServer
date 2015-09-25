@@ -17,10 +17,10 @@ routerNotasTags.route('/like*')
           if (itags.tags instanceof Array) {
                       var size = Object.keys(itags.tags).length;
                 for (var i=0; i < size; i++){
-                          search.push(new RegExp(itags.tags[i],'ig'));
+                          search.push(new RegExp(decodeURIComponent(itags.tags[i]),'ig'));
                 }
           } else {
-                search.push(new RegExp(itags.tags,'ig'));
+                search.push(new RegExp(decodeURIComponent(itags.tags),'ig'));
           }
 
              notas = mongoose.model('Notas');
@@ -49,10 +49,10 @@ routerNotasTags.route('/or*')
           if (itags.tags instanceof Array) {
                       var size = Object.keys(itags.tags).length;
                 for (var i=0; i < size; i++){
-                          search.push({ tags :{ $regex: new RegExp(itags.tags[i],'ig')}});
+                          search.push({ tags :{ $regex: new RegExp(decodeURIComponent(itags.tags[i]),'ig')}});
                 }
           } else {
-                    search.push({ tags: { $regex: new RegExp(itags.tags,'ig')}});
+                    search.push({ tags: { $regex: new RegExp(decodeURIComponent(itags.tags),'ig')}});
           }
 
              notas = mongoose.model('Notas');
@@ -81,10 +81,10 @@ routerNotasTags.route('/and*')
           if (itags.tags instanceof Array) {
                       var size = Object.keys(itags.tags).length;
                 for (var i=0; i < size; i++){
-                          search.push({ tags :{ $regex: new RegExp(itags.tags[i],'ig')}});
+                          search.push({ tags :{ $regex: new RegExp(decodeURIComponent(itags.tags[i]),'ig')}});
                    }
           } else {
-                    search.push({ tags: { $regex: new RegExp(itags.tags,'ig')}});
+                    search.push({ tags: { $regex: new RegExp(decodeURIComponent(itags.tags),'ig')}});
           }
 
              notas = mongoose.model('Notas');
