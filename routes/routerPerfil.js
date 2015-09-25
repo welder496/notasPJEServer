@@ -26,7 +26,7 @@ routerPerfil.route('/new')
              perfil = mongoose.model('Perfil');
              if (req.body.hasOwnProperty('descricao')) {
 
-                   var descricao = req.body.descricao;
+                   var descricao = decodeURIComponent(req.body.descricao);
 
                    if (typeof(descricao) != "undefined" && descricao !="") {
                           var Perfil = new perfil();
@@ -55,7 +55,7 @@ routerPerfil.route('/:descricao')
 
       .delete(function(req,res){
              perfil = mongoose.model('Perfil');
-             var descricao = req.params.descricao;
+             var descricao = decodeURIComponent(req.params.descricao);
              if (descricao != "" && typeof(descricao) != "undefined") {
                     perfil.remove({descricao: descricao}, function(err,perfil){
                         if (err)
@@ -97,7 +97,7 @@ routerPerfil.route('/:id/:descricao')
       .put(function(req,res){
              perfil = mongoose.model('Perfil');
              var id = req.params.id;
-             var descricao = req.params.descricao;
+             var descricao = decodeURIComponent(req.params.descricao);
              if (id != "" && typeof(id) != "undefined" && typeof(descricao) != "undefined" && descricao!="") {
                     perfil.findOne({_id: id}, function(err,perfil){
                           if (err)
