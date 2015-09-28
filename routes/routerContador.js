@@ -16,37 +16,123 @@ routerCodigo.route('/all')
                                        res.json({message: "Contadores não foram encontrados!!"});
                              }
                    });
-      });
+          });
 
-routerCodigo.route('/:prefixo')
 
-         .get(function(req, res){
-                   var prefixo = req.params.prefixo;
+routerCodigo.route('/prefixo/:prefixo/casas/:valor')
+
+         .put(function(req,res){
+                   var prefixo = decodeURIComponent(req.params.prefixo);
+                   var valor = parseInt(decodeURIComponent(req.params.valor));
+                   if (prefixo != "") {
+                             contador = mongoose.model('Contador');
+                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err, contador){
+                                       if (err)
+                                                res.send(err);
+                                       if (isNaN(valor)) {
+                                                res.json({message: "Não foi possível mudar o número de casas!!"});
+                                       } else {
+                                                contador.casas = valor;
+                                                contador.save(function(err){
+                                                          if (err)
+                                                                   res.send(err);
+                                                });
+                                                res.json({message: "Número de casas alterado com sucesso!!"});
+                                       }
+                             });
+                   } else {
+                             res.json({message: "Contador não foi encontrado!!"});
+                   }
+         });
+
+
+routerCodigo.route('/descricao/:descricao')
+
+          .get(function(req, res){
+                   var descricao = decodeURIComponent(req.params.descricao);
                    contador = mongoose.model('Contador');
-                   contador.findOne({prefixo: prefixo}, function(err,contador){
+                   contador.findOne({descricao: descricao}, function(err,contador){
                              if (err)
                                        res.send(err);
                              if (contador != null) {
-                                       res.json(codigo);
+                                       res.json(contador);
                              } else {
                                        res.json({message: "Contador não foi encontrado!!"});
                              }
                    });
-         });
+         })
+
+
+          .delete(function(req, res){
+                   var descricao = decodeURIComponent(req.params.descricao);
+                   contador = mongoose.model('Contador');
+                   if (descricao != "" || typeof(descricao) != "undefined") {
+                             contador.remove({descricao: descricao}, function(err,contador){
+                                      if (err)
+                                                res.send(err);
+                                      if (contador != null) {
+                                                res.json({message: "Contador excluído com sucesso!!"});
+                                      } else {
+                                                res.json({message: "Não foi possível excluir o contador!!"});
+                                      }
+                             });
+                   } else {
+                             res.json({message: "Não foi possível excluir o contador!!"});
+                   }
+
+          });
+
+
+
+routerCodigo.route('/prefixo/:prefixo')
+
+          .get(function(req, res){
+                   var prefixo = decodeURIComponent(req.params.prefixo);
+                   contador = mongoose.model('Contador');
+                   contador.findOne({prefixo: prefixo.toUpperCase()}, function(err,contador){
+                             if (err)
+                                       res.send(err);
+                             if (contador != null) {
+                                       res.json(contador);
+                             } else {
+                                       res.json({message: "Contador não foi encontrado!!"});
+                             }
+                   });
+         })
+
+          .delete(function(req, res){
+                   var prefixo = decodeURIComponent(req.params.prefixo);
+                   contador = mongoose.model('Contador');
+                   if (prefixo != "" || typeof(prefixo) != "undefined") {
+                             contador.remove({prefixo: prefixo.toUpperCase()}, function(err,contador){
+                                      if (err)
+                                                res.send(err);
+                                      if (contador != null) {
+                                                res.json({message: "Contador excluído com sucesso!!"});
+                                      } else {
+                                                res.json({message: "Não foi possível excluir o contador!!"});
+                                      }
+                             });
+                   } else {
+                             res.json({message: "Não foi possível excluir o contador!!"});
+                   }
+
+          });
 
 routerCodigo.route('/new')
 
-         .post(function(req,res){
-                  var prefixo = req.body.prefixo;
-                  var descricao = req.body.descricao;
+          .post(function(req,res){
+                  var prefixo = decodeURIComponent(req.body.prefixo);
+                  var descricao = decodeURIComponent(req.body.descricao);
 
                   if (prefixo != "" && descricao != "") {
                              contador = mongoose.model('Contador');
                              Contador = new contador();
-                             Contador.prefixo = prefixo;
+                             Contador.prefixo = prefixo.toUpperCase();
                              Contador.descricao = descricao;
                              Contador.contador = 0;
-                             contador.findOne({prefixo: prefixo}, function(err,contador){
+                             Contador.casas = 0;
+                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err,contador){
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
@@ -66,17 +152,18 @@ routerCodigo.route('/new')
 
           });
 
-routerCodigo.route('/:prefixo/reset')
+routerCodigo.route('/prefixo/:prefixo/reset')
 
           .put(function(req, res){
-                    var prefixo = req.params.prefixo;
+                    var prefixo = decodeURIComponent(req.params.prefixo);
                     if (prefixo != "") {
                              contador = mongoose.model('Contador');
-                             contador.findOne({prefixo: prefixo}, function(err, contador){
+                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err, contador){
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
                                                 contador.contador = 0;
+                                                contador.casas = 0;
                                                 contador.save(function(err){
                                                           if (err)
                                                                   res.send(err);
@@ -91,13 +178,14 @@ routerCodigo.route('/:prefixo/reset')
                     }
           });
 
-routerCodigo.route('/:prefixo/inc')
 
-          .put(function(req, res){
-                   var prefixo = req.params.prefixo;
+routerCodigo.route('/prefixo/:prefixo/next')
+
+          .get(function(req, res){
+                   var prefixo = decodeURIComponent(req.params.prefixo);
                    if (prefixo != "") {
                              contador = mongoose.model('Contador');
-                             contador.findOne({prefixo: prefixo}, function(err, contador){
+                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err, contador){
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
@@ -106,6 +194,10 @@ routerCodigo.route('/:prefixo/inc')
                                                           if (err)
                                                                    res.send(err);
                                                 });
+                                                var num = contador.contador.toString();
+                                                for (var i = num.length; i < contador.casas; i++)
+                                                         num = "0"+num;
+                                                res.json(contador.prefixo+'-'+num);
                                        } else {
                                                 res.json({message: "Contador não foi encontrado!!"});
                                        }
@@ -115,21 +207,81 @@ routerCodigo.route('/:prefixo/inc')
                    }
           });
 
-routerCodigo.route('/:prefixo/dec')
 
-          .put(function(req, res){
-                   var prefixo = req.params.prefixo;
+routerCodigo.route('/prefixo/:prefixo/prior')
+
+          .get(function(req, res){
+                   var prefixo = decodeURIComponent(req.params.prefixo);
                    if (prefixo != "") {
                              contador = mongoose.model('Contador');
-                             contador.findOne({prefixo: prefixo}, function(err, contador){
+                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err, contador){
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
                                                 contador.contador = parseInt(contador.contador - 1);
+                                                if (contador.contador < 0)
+                                                          contador.contador = 0;
                                                 contador.save(function(err){
                                                           if (err)
                                                                    res.send(err);
                                                 });
+                                                var num = contador.contador.toString();
+                                                for (var i = num.length; i < contador.casas; i++)
+                                                         num = "0"+num;
+                                                res.json(contador.prefixo+'-'+num);
+                                       } else {
+                                                res.json({message: "Contador não foi encontrado!!"});
+                                       }
+                             });
+                   } else {
+                             res.json({message: "Não foi possível encontrar o contador"});
+                   }
+          });
+
+
+routerCodigo.route('/prefixo/:prefixo/inc')
+
+          .put(function(req, res){
+                   var prefixo = decodeURIComponent(req.params.prefixo);
+                   if (prefixo != "") {
+                             contador = mongoose.model('Contador');
+                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err, contador){
+                                       if (err)
+                                                res.send(err);
+                                       if (contador != null) {
+                                                contador.contador = parseInt(contador.contador + 1);
+                                                contador.save(function(err){
+                                                          if (err)
+                                                                   res.send(err);
+                                                });
+                                                res.json(contador);
+                                       } else {
+                                                res.json({message: "Contador não foi encontrado!!"});
+                                       }
+                             });
+                   } else {
+                             res.json({message: "Não foi possível encontrar o contador"});
+                   }
+          });
+
+routerCodigo.route('/prefixo/:prefixo/dec')
+
+          .put(function(req, res){
+                   var prefixo = decodeURIComponent(req.params.prefixo);
+                   if (prefixo != "") {
+                             contador = mongoose.model('Contador');
+                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err, contador){
+                                       if (err)
+                                                res.send(err);
+                                       if (contador != null) {
+                                                contador.contador = parseInt(contador.contador - 1);
+                                                if (contador.contador < 0)
+                                                          contador.contador = 0;
+                                                contador.save(function(err){
+                                                          if (err)
+                                                                   res.send(err);
+                                                });
+                                                res.json(contador);
                                        } else {
                                                 res.json({message: "Contador não foi encontrado!!"});
                                        }
