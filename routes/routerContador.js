@@ -49,7 +49,7 @@ routerCodigo.route('/prefixo/:prefixo/casas/:valor')
 
 routerCodigo.route('/descricao/:descricao')
 
-          .get(function(req, res){
+          .get(function(req, res, next){
                    var descricao = decodeURIComponent(req.params.descricao);
                    contador = mongoose.model('Contador');
                    contador.findOne({descricao: descricao}, function(err,contador){
@@ -63,11 +63,10 @@ routerCodigo.route('/descricao/:descricao')
                    });
          })
 
-
-          .delete(function(req, res){
+          .delete(function(req, res, next){
                    var descricao = decodeURIComponent(req.params.descricao);
                    contador = mongoose.model('Contador');
-                   if (descricao != "" || typeof(descricao) != "undefined") {
+                   if (descricao != "" && typeof(descricao) != "undefined") {
                              contador.remove({descricao: descricao}, function(err,contador){
                                       if (err)
                                                 res.send(err);
@@ -80,9 +79,43 @@ routerCodigo.route('/descricao/:descricao')
                    } else {
                              res.json({message: "Não foi possível excluir o contador!!"});
                    }
+          })
 
+          .put(function(req, res, next){
+                   var descricao = decodeURIComponent(req.params.descricao);
+                   var novadescricao =decodeURIComponent(req.body.descricao);
+                   var prefixo = decodeURIComponent(req.body.prefixo);
+                   var cont = decodeURIComponent(req.body.contador);
+                   var casas = decodeURIComponent(req.body.casas);
+                   contador = mongoose.model('Contador');
+                   if (descricao != "" && typeof(descricao) != "undefined") {
+                          contador.findOne({descricao: descricao}, function(err, contador){
+                                if (contador != null) {
+                                      contador.descricao = novadescricao.toUpperCase();
+                                      contador.prefixo = prefixo.toUpperCase();
+                                      if (isNaN(cont)) {
+                                             contador.contador = 0;
+                                      } else {
+                                             contador.contador = cont;
+                                      }
+                                      if (isNaN(casas)) {
+                                             contador.casas = 0;
+                                      } else {
+                                             contador.casas = casas;
+                                      }
+                                      contador.save(function(err){
+                                             if (err)
+                                                   res.send(err);
+                                      });
+                                      res.json({message: "Contador atualizado com sucesso!!"});
+                                } else {
+                                      res.json({message: "Contador não foi encontrado!!"});
+                                }
+                          });
+                   } else {
+                          res.json({message: "Não foi possível atualizar o contador!!"});
+                   }
           });
-
 
 
 routerCodigo.route('/prefixo/:prefixo')
@@ -104,7 +137,7 @@ routerCodigo.route('/prefixo/:prefixo')
           .delete(function(req, res){
                    var prefixo = decodeURIComponent(req.params.prefixo);
                    contador = mongoose.model('Contador');
-                   if (prefixo != "" || typeof(prefixo) != "undefined") {
+                   if (prefixo != "" && typeof(prefixo) != "undefined") {
                              contador.remove({prefixo: prefixo.toUpperCase()}, function(err,contador){
                                       if (err)
                                                 res.send(err);
@@ -130,14 +163,14 @@ routerCodigo.route('/new')
                              contador = mongoose.model('Contador');
                              Contador = new contador();
                              Contador.prefixo = prefixo.toUpperCase();
-                             Contador.descricao = descricao;
+                             Contador.descricao = descricao.toUpperCase();
                              Contador.contador = 0;
                              Contador.casas = 0;
-                             contador.findOne({prefixo: prefixo.toUpperCase()}, function(err,contador){
+                             contador.findOne({$or: [{descricao: Contador.descricao},{prefixo: Contador.prefixo}]}, function(err,contador){
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
-                                                res.json({message: "Contador já existe!!"});
+                                                res.json({message: "Contador já existe!! A descrição e o prefixo devem ser únicos..."});
                                        }  else {
                                                 Contador.save(function(err){
                                                           if (err)
