@@ -89,7 +89,7 @@ routerNotasCodigoCodigo.route('/:codigo')
                           res.send(err);
                    if (notas != null)
                           id = notas._id;
-                   if (id != null) {
+                   if (id != "") {
                           if (fs.existsSync(docs)){
                              if (fs.existsSync(docs+'/'+id)){
                                 fs.readdirSync(docs+'/'+id).forEach(function(file,index){
@@ -103,7 +103,7 @@ routerNotasCodigoCodigo.route('/:codigo')
                                                    fs.rmdirSync(docs+'/'+id);
                                       });
                              }
-                      }
+                          }
                           res.json({message: 'Nota excluída com sucesso!!' });
                    } else {
                           res.json({message: 'Não foi possível excluir a Nota!!'});
