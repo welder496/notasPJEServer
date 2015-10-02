@@ -84,14 +84,11 @@ routerNotasCodigoCodigo.route('/:codigo')
              var id = "";
 
              notas = mongoose.model('Notas');
-             notas.findOne({codigo:codigo},function(err,notas){
-                  id = notas._id;
-             });
-
              notas.remove({codigo: codigo},function(err, notas) {
                    if (err)
                           res.send(err);
-
+                   if (notas != null)
+                          id = notas._id;
                    if (id != null) {
                           if (fs.existsSync(docs)){
                              if (fs.existsSync(docs+'/'+id)){
