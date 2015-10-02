@@ -94,15 +94,15 @@ routerNotasCodigoCodigo.route('/:codigo')
                              if (fs.existsSync(docs+'/'+id)){
                                 fs.readdirSync(docs+'/'+id).forEach(function(file,index){
                                       var currentPath=docs+'/'+id+'/'+file;
-                                   if (!fs.lstatSync(currentPath).isDirectory()){
-                                      fs.unlinkSync(currentPath);
-                                   }
+                                      if (!fs.lstatSync(currentPath).isDirectory()){
+                                             fs.unlinkSync(currentPath);
+                                      }
                                 });
-                                      fs.isEmpty(docs+'/'+id, function(empty){
-                                             if (empty)
-                                                   fs.rmdirSync(docs+'/'+id);
+                                fs.isEmpty(docs+'/'+id, function(empty){
+                                      if (empty)
+                                             fs.rmdirSync(docs+'/'+id);
                                       });
-                             }
+                                }
                           }
                           res.json({message: 'Nota excluída com sucesso!!' });
                    } else {
