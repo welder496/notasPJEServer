@@ -83,20 +83,20 @@ routerNotasId.route('/:nota_id')
                    if (err)
                         res.send(err);
                    if (notas != null) {
-                     if (fs.existsSync(docs)){
-                            if (fs.existsSync(docs+'/'+notas._id) && notas._id!=""){
-                               fs.readdirSync(docs+'/'+notas._id).forEach(function(file,index){
-                                  var currentPath=docs+'/'+notas._id+'/'+file;
-                                   if (!fs.lstatSync(currentPath).isDirectory()){
-                                      fs.unlinkSync(currentPath);
-                                   }
-                                });
+                          if (fs.existsSync(docs)){
+                                if (fs.existsSync(docs+'/'+notas._id) && notas._id!=""){
+                                      fs.readdirSync(docs+'/'+notas._id).forEach(function(file,index){
+                                             var currentPath=docs+'/'+notas._id+'/'+file;
+                                             if (!fs.lstatSync(currentPath).isDirectory()){
+                                                   fs.unlinkSync(currentPath);
+                                             }
+                                      });
                                       fs.isEmpty(docs+'/'+notas._id, function(empty){
                                              if (empty)
                                                    fs.rmdirSync(docs+'/'+notas._id);
                                       });
-                            }
-                      }
+                                }
+                          }
                           res.json({message: "Nota excluída com sucesso!!" });
                    } else {
                           res.json({message: "Não foi possível excluir a Nota!!"});
