@@ -28,7 +28,7 @@ routerMapReduceNotasByTags.route('/Tags')
          .get(function(req, res){
                    var Notas = mongoose.model('Notas');
                    Notas.mapReduce(Tags, function(err, model, stats){
-                             model.find().where('value').gt(3).sort({value: -1}).exec(function(err, notas){
+                             model.find().where('value').gte(3).sort({value: -1}).exec(function(err, notas){
                                       if (err)
                                                 res.send(err);
                                       res.json(notas);
