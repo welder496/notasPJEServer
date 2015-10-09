@@ -12,6 +12,7 @@ var util = require("util");
 var notas = require('./model/notas');
 var routerPerfil = require('./routes/routerPerfil');
 var routerFuncionalidade = require('./routes/routerFuncionalidade');
+var routerStack = require('./routes/routerStack');
 var routerContador = require('./routes/routerContador');
 var routerNotasTags = require('./routes/routerNotasTags');
 var routerNotasCodigoCodigo = require('./routes/routerNotasCodigoCodigo');
@@ -83,6 +84,7 @@ app.use('/notas/notas/first',routerNotasFirst);
 app.use('/notas/notas/like',routerNotasLike);
 app.use('/notas/notas/codigo/like',routerNotasCodigoLike);
 app.use('/notas/mapReduce',routerMapReduceNotasByTags);
+app.use('/notas/stack',routerStack);
 app.use('/arquivos',express.static(docs));
 /*
  * Generic access to assess the application!!
