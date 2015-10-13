@@ -59,7 +59,7 @@ routerStack.route('/clear')
 routerStack.route('/push/:valor')
 
         .put(function(req,res){
-                 var value = req.params.valor;
+                 var value = decodeURIComponent(req.params.valor);
                  stack = mongoose.model('Stack');
                  stack.findOne({descricao: "Owner"}, function(err, stack){
                           if (stack != null) {
@@ -95,21 +95,21 @@ routerStack.route('/pop')
          .get(function(req,res){
                  stack = mongoose.model('Stack');
                  stack.findOne({descricao: "Owner"}).exec(function(err, stack){
-                          if (err)
-                                  res.send(err);
-                          if (stack != null){
-                                  if (stack.pilha.length != 0) {
-                                           res.json(stack.pilha.shift());
-                                           stack.save(function(err){
-                                                   if (err)
-                                                            res.send(err);
-                                           });
-                                  } else {
-                                           res.json({message: "Pilha está vazia!!"});
-                                  }
-                          } else {
-                                  res.json({message: "Não existe pilha!!"});
-                          }
+                       if (err)
+                            res.send(err);
+                       if (stack != null){
+                            if (stack.pilha.length != 0) {
+                                  res.json(stack.pilha.shift());
+                                  stack.save(function(err){
+                                        if (err)
+                                             res.send(err);
+                                  });
+                            } else {
+                                  res.json({message: "Pilha está vazia!!"});
+                            }
+                       } else {
+                            res.json({message: "Não existe pilha!!"});
+                       }
                  });
          });
 
