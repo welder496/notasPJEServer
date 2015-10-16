@@ -2,7 +2,71 @@ var express = require('express');
 var routerNotasTags = express.Router({mergeParams: true});
 var mongoose = require('mongoose');
 var notas = require('../model/notas');
+var stack = require('localstack');
 
+var parseData = function(str){
+      var firstopr = "";
+      var substr = {};
+      var opr = "";
+      while (! stack.isEmpty()) {
+            stack.pop(function(data){
+                 if (data.indexOf('$') != -1) {
+                       if (firstopr == "") {
+                            firstopr = data;
+                            str[firstopr] = [];
+                       } else {
+                            opr = data;
+                            substr[opr] = [];
+                            str[firstopr].push(substr);
+                       }
+                       opr=data;
+                 } else {
+                       stack.push(data,function(data){});
+                       stack.pop(function(data){
+                             var value = data;
+                             if (value.indexOf('$') == -1) {
+                                  if (opr == firstopr)
+                                       str[firstopr].push({tags: {$regex: new RegExp(value,'ig')}});
+                                  else
+                                       substr[opr].push({tags: {$regex: new RegExp(value,'ig')}});
+                             } else {
+                                  stack.push(value,function(data){});
+                                  return;
+                            }
+                       });
+                 }
+           });
+      }
+      return str;
+}
+
+/*
+var createObject = function(str){
+     var obj ={};
+     while (! stack.isEmpty()) {
+            obj['tags']=[];
+            stack.pop(function(data){
+                 var opr = data;
+                 if (opr.indexOf('$') != -1) {
+                       str[opr] = [];
+                       obj = createObject(obj);
+
+                       if (txt.charAt(txt.length-1)==',')
+                           txt = txt.substring(0,txt.length-1);
+                                        str[opr].push(obj);
+                       //str = str + '{"'+opr+'":['+txt+']}';
+                       console.log(str[opr]);
+                       return;
+                 } else {
+                       obj['tags'].push({$regex: new RegExp(opr,'ig')});
+                       console.log(obj['tags']);
+                      //str = str + '{ "tags":  {"$regex": "/'+opr+'/gi"}},';
+                 }
+            });
+    }
+    return str;
+};
+*/
 /*
  * Search with the Like operator, with OR behavior
  * This search operates over tags field. Values do not need to be exact.
@@ -99,6 +163,40 @@ routerNotasTags.route('/and*')
             });
       });
 
+routerNotasTags.route('/search*')
 
+      .get(function(req, res) {
+            var searchTags = req.query;
+
+            if (searchTags == "" || typeof(searchTags) == "undefined") {
+                 searchTags = "";
+            } else {
+                 Object.keys(searchTags).forEach(function(key){
+                       if (searchTags[key] instanceof Array) {
+                             searchTags[key].forEach(function(value){
+                                  stack.push(decodeURIComponent(value), function(data){});
+                             });
+                       } else {
+                             stack.push(decodeURIComponent(searchTags[key]),function(data){});
+                       }
+                 });
+                 stack.reverse();
+            }
+
+            //Mount commands for mongoDB search....
+            var str = {};
+            str = parseData(str);
+
+            notas = mongoose.model('Notas');
+            notas.find(str).sort({'criado_em': -1}).exec(function(err, notas) {
+                 if (err)
+                       res.send(err);
+                 if (notas != null){
+                       res.json(notas);
+                 } else {
+                       res.json({message:"Notas não foram encontradas!!"});
+                 }
+            });
+      });
 
 module.exports = routerNotasTags;

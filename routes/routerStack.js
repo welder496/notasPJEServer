@@ -5,7 +5,7 @@ var stack = require('../model/stack');
 
 routerStack.route('/new')
 
-         .post(function(req,res){
+            .post(function(req,res){
                  stack = mongoose.model('Stack');
                  var Stack = new stack();
                  Stack.descricao = "Owner";
@@ -21,11 +21,11 @@ routerStack.route('/new')
                                  res.json({message: "Pilha já existe!!"});
                          } ;
                  });
-         });
+            });
 
 routerStack.route('/stack')
 
-        .get(function(req,res){
+            .get(function(req,res){
                  stack = mongoose.model('Stack');
                  stack.find().exec(function(err, stack){
                           if (err)
@@ -36,11 +36,11 @@ routerStack.route('/stack')
                                   res.json({message: "Não existe(m) pilha(s)!!"});
                           }
                  });
-        });
+            });
 
 routerStack.route('/clear')
 
-        .put(function(req,res){
+            .put(function(req,res){
                  stack = mongoose.model('Stack');
                  if (stack.length != 0) {
                           stack.find().exec(function(err,stack){
@@ -54,11 +54,11 @@ routerStack.route('/clear')
                  } else {
                           res.json({message: "Não existe pilha!!"});
                  }
-        });
+           });
 
 routerStack.route('/push/:valor')
 
-        .put(function(req,res){
+            .put(function(req,res){
                  var value = decodeURIComponent(req.params.valor);
                  stack = mongoose.model('Stack');
                  stack.findOne({descricao: "Owner"}, function(err, stack){
@@ -77,22 +77,22 @@ routerStack.route('/push/:valor')
                                   res.json({message: "Não existe pilha!!"});
                           }
                  });
-        });
+           });
 
 routerStack.route('/resetAll')
 
-        .delete(function(req,res){
+            .delete(function(req,res){
                  stack = mongoose.model('Stack');
                  stack.remove(function(err){
                           if (err)
                                   res.send(err);
                           res.json({message: "Pilhas removidas com sucesso!!"});
                  });
-        });
+           });
 
 routerStack.route('/pop')
 
-         .get(function(req,res){
+           .get(function(req,res){
                  stack = mongoose.model('Stack');
                  stack.findOne({descricao: "Owner"}).exec(function(err, stack){
                        if (err)
@@ -111,6 +111,6 @@ routerStack.route('/pop')
                             res.json({message: "Não existe pilha!!"});
                        }
                  });
-         });
+           });
 
 module.exports = routerStack;
