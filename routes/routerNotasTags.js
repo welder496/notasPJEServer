@@ -32,7 +32,7 @@ var parseData = function(str){
                              } else {
                                   stack.push(value,function(data){});
                                   return;
-                            }
+                             }
                        });
                  }
            });
@@ -41,63 +41,36 @@ var parseData = function(str){
 }
 
 /*
-var createObject = function(str){
-     var obj ={};
-     while (! stack.isEmpty()) {
-            obj['tags']=[];
-            stack.pop(function(data){
-                 var opr = data;
-                 if (opr.indexOf('$') != -1) {
-                       str[opr] = [];
-                       obj = createObject(obj);
-
-                       if (txt.charAt(txt.length-1)==',')
-                           txt = txt.substring(0,txt.length-1);
-                                        str[opr].push(obj);
-                       //str = str + '{"'+opr+'":['+txt+']}';
-                       console.log(str[opr]);
-                       return;
-                 } else {
-                       obj['tags'].push({$regex: new RegExp(opr,'ig')});
-                       console.log(obj['tags']);
-                      //str = str + '{ "tags":  {"$regex": "/'+opr+'/gi"}},';
-                 }
-            });
-    }
-    return str;
-};
-*/
-/*
  * Search with the Like operator, with OR behavior
  * This search operates over tags field. Values do not need to be exact.
  */
 routerNotasTags.route('/like*')
 
-       .get(function(req, res) {
-              var itags = req.query;
+      .get(function(req, res) {
+           var itags = req.query;
 
-          var search = [];
+           var search = [];
 
-          if (itags.tags instanceof Array) {
-                      var size = Object.keys(itags.tags).length;
-                for (var i=0; i < size; i++){
-                          search.push(new RegExp(decodeURIComponent(itags.tags[i]),'ig'));
-                }
-          } else {
-                search.push(new RegExp(decodeURIComponent(itags.tags),'ig'));
-          }
+           if (itags.tags instanceof Array) {
+                 var size = Object.keys(itags.tags).length;
+                 for (var i=0; i < size; i++){
+                       search.push(new RegExp(decodeURIComponent(itags.tags[i]),'ig'));
+                 }
+           } else {
+                 search.push(new RegExp(decodeURIComponent(itags.tags),'ig'));
+           }
 
              notas = mongoose.model('Notas');
              notas.find({tags: {$in: search}}).sort({'criado_em': -1}).exec(function(err, notas) {
-                    if (err)
-                          res.send(err);
-                    if (notas != null){
-                          res.json(notas);
-                    } else {
-                          res.json({message:"Notas não foram encontradas!!"});
-                    }
-             });
-       });
+                 if (err)
+                       res.send(err);
+                 if (notas != null){
+                       res.json(notas);
+                 } else {
+                       res.json({message:"Notas não foram encontradas!!"});
+                 }
+           });
+      });
 
 /*
  * Search with the OR operator
@@ -182,6 +155,10 @@ routerNotasTags.route('/search*')
                  });
                  stack.reverse();
             }
+
+            stack.stack(function(data){
+                  console.log(data);
+            });
 
             //Mount commands for mongoDB search....
             var str = {};
