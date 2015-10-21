@@ -6,7 +6,7 @@ var perfil = require('../model/funcionalidades');
 routerFuncionalidade.route('/all')
 
       .get(function(req,res){
-            funcionalidade = mongoose.model('Funcionalidade');
+            var funcionalidade = mongoose.model('Funcionalidade');
             funcionalidade.find().sort({'descricao':1}).exec(function(err, funcionalidade) {
                     if (err)
                           res.send(err);
@@ -24,7 +24,7 @@ routerFuncionalidade.route('/descricao/:descricao')
       .get(function(req,res){
              var descricao = decodeURIComponent(req.params.descricao);
 
-             funcionalidade = mongoose.model('Funcionalidade');
+             var funcionalidade = mongoose.model('Funcionalidade');
              funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
                    if (err)
                         res.send(err);
@@ -39,13 +39,13 @@ routerFuncionalidade.route('/descricao/:descricao')
       .post(function(req, res){
              var descricao = decodeURIComponent(req.params.descricao);
 
-             funcionalidade = mongoose.model('Funcionalidade');
+             var funcionalidade = mongoose.model('Funcionalidade');
              funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
                    if (err)
                           res.send(err);
                    if (funcionalidade == null) {
                           funcionalidade = mongoose.model('Funcionalidade');
-                          var Funcionalidade = new funcionalidade();
+                          var Funcionalidade = new Funcionalidade();
                           Funcionalidade.descricao = descricao;
                           Funcionalidade.save(function(err){
                                 if (err)
@@ -66,7 +66,7 @@ routerFuncionalidade.route('/descricao/:descricao')
              if (typeof(subTipos) != "undefined" && subTipos != "" &&
                  typeof(descricao) != "undefined" && descricao != "" &&
                  typeof(novaDescricao) != "undefined" && novaDescricao != "") {
-                   funcionalidade = mongoose.model('Funcionalidade');
+                   var funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
                           if (funcionalidade != null) {
                                 funcionalidade.descricao = novaDescricao;
@@ -92,7 +92,7 @@ routerFuncionalidade.route('/descricao/:descricao')
       .delete(function(req,res){
              var descricao = decodeURIComponent(req.params.descricao);
 
-             funcionalidade = mongoose.model('Funcionalidade');
+             var funcionalidade = mongoose.model('Funcionalidade');
              if (descricao != "" && typeof(descricao) != "undefined") {
                   funcionalidade.remove({descricao: descricao}, function(err, funcionalidade){
                           if (err)
@@ -116,7 +116,7 @@ routerFuncionalidade.route('/descricao/:descricao/to/:novaDescricao')
 
              if (typeof(descricao) != "undefined" && descricao != "" &&
                  typeof(novaDescricao) != "undefined" && novaDescricao != "") {
-                   funcionalidade = mongoose.model('Funcionalidade');
+                   var funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
                           if (funcionalidade != null) {
                                 funcionalidade.descricao = novaDescricao;
@@ -145,7 +145,7 @@ routerFuncionalidade.route('/descricao/:descricao/subtipo/:subtipo/to/:newsubtip
             if (typeof(descricao) != "undefined" && descricao != "" &&
                 typeof(subtipo) != "undefined" && subtipo != "" &&
                 typeof(newsubtipo) != "undefined" && newsubtipo != "") {
-                  funcionalidade = mongoose.model('Funcionalidade');
+                  var funcionalidade = mongoose.model('Funcionalidade');
                   funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
                           if (funcionalidade != null) {
                                 if (funcionalidade.subtipos.indexOf(subtipo) != -1) {
@@ -174,7 +174,7 @@ routerFuncionalidade.route('/descricao/:descricao/subtipo/:subtipo')
              var subtipo = decodeURIComponent(req.params.subtipo);
              if (typeof(descricao) != "undefined" && descricao != "" &&
                  typeof(subtipo) != "undefined" && subtipo != "") {
-                   funcionalidade = mongoose.model('Funcionalidade');
+                   var funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
                           if (funcionalidade != null) {
                                 if (funcionalidade.subtipos.indexOf(subtipo) == -1) {
@@ -201,7 +201,7 @@ routerFuncionalidade.route('/descricao/:descricao/subtipo/:subtipo')
              var subtipo = decodeURIComponent(req.params.subtipo);
              if (typeof(descricao) != "undefined" && descricao != "" &&
                  typeof(subtipo) != "undefined" && subtipo !="") {
-                   funcionalidade = mongoose.model('Funcionalidade');
+                   var funcionalidade = mongoose.model('Funcionalidade');
                    funcionalidade.findOne({descricao: descricao}, function(err, funcionalidade){
                           if (funcionalidade != null) {
                                if (funcionalidade.subtipos.indexOf(subtipo) != -1) {
@@ -226,12 +226,12 @@ routerFuncionalidade.route('/descricao/:descricao/subtipo/:subtipo')
 routerFuncionalidade.route('/new')
 
       .post(function(req,res){
-            funcionalidade = mongoose.model('Funcionalidade');
+            var funcionalidade = mongoose.model('Funcionalidade');
             if (req.body.hasOwnProperty('descricao')) {
-                   var Funcionalidade = new funcionalidade();
+                   var Funcionalidade = new Funcionalidade();
                    Funcionalidade.descricao = decodeURIComponent(req.body.descricao);
                    var subTipos = decodeURIComponent(req.body.subtipo);
-                   if (subTipos instanceof Array) {
+                   if (typeof(subTipos) == "string") {
                           subTipos.forEach(function(key){
                                 var subtipo = key;
                                 if (Funcionalidade.subtipos.indexOf(subtipo) == -1)
@@ -261,7 +261,7 @@ routerFuncionalidade.route('/new')
 routerFuncionalidade.route('/new/:descricao/subtipo')
 
       .post(function(req,res){
-            funcionalidade = mongoose.model('Funcionalidade');
+            var funcionalidade = mongoose.model('Funcionalidade');
             if (req.body.hasOwnProperty('subtipo')){
                   var descricao = decodeURIComponent(req.params.descricao);
                   var subTipos = decodeURIComponent(req.body.subtipo);
@@ -269,7 +269,7 @@ routerFuncionalidade.route('/new/:descricao/subtipo')
                          if (err)
                              res.json(err);
                          if (funcionalidade != null) {
-                                if (subTipos instanceof Array) {
+                                if (typeof(subTipos) == "string") {
                                        subTipos.forEach(function(key){
                                              var subtipo = key;
                                              if (funcionalidade.subtipos.indexOf(subtipo) == -1)

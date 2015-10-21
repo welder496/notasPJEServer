@@ -1,8 +1,11 @@
+/* global __base */
 var express = require('express');
 var routerNotasId = express.Router({mergeParams: true});
 var mongoose = require('mongoose');
 var notas = require('../model/notas');
 var fs = require('extfs');
+
+var docs = __base + '/documentos';
 
 routerNotasId.route('/:nota_id')
 

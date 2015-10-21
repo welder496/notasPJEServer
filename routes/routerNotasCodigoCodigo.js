@@ -1,3 +1,4 @@
+/* global __base */
 var express = require('express');
 var routerNotasCodigoCodigo = express.Router({mergeParams: true});
 var mongoose = require('mongoose');

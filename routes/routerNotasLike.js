@@ -9,7 +9,7 @@ routerNotasLike.route('/:nota')
 
         var reqs = decodeURIComponent(req.params.nota);
 
-        search = new RegExp(reqs,'ig');
+        var search = new RegExp(reqs,'ig');
 
         notas = mongoose.model('Notas');
         notas.find({nota: search}).sort({'criado_em': -1}).exec(function(err, notas) {

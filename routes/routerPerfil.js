@@ -29,7 +29,7 @@ routerPerfil.route('/new')
                    var descricao = decodeURIComponent(req.body.descricao);
 
                    if (typeof(descricao) != "undefined" && descricao !="") {
-                          var Perfil = new perfil();
+                          var Perfil = new Perfil();
                           Perfil.descricao = descricao;
 
                           perfil.findOne({descricao: Perfil.descricao}, function(err, perfil){

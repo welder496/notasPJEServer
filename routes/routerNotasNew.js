@@ -1,3 +1,4 @@
+/* global __base */
 var express = require('express');
 var routerNotasNew = express.Router({mergeParams: true});
 var mongoose = require('mongoose');
@@ -10,7 +11,7 @@ routerNotasNew.route('/')
      .post(function(req, res) {
              notas = mongoose.model('Notas');
              if (req.body.hasOwnProperty('codigo')){
-                   var Notas = new notas();
+                   var Notas = new Notas();
 
                    Notas.codigo = req.body.codigo.toUpperCase().trim();
                    Notas.nota = decodeURIComponent(req.body.nota);

@@ -93,12 +93,12 @@ routerCodigo.route('/descricao/:descricao')
                                 if (contador != null) {
                                       contador.descricao = novadescricao.toUpperCase();
                                       contador.prefixo = prefixo.toUpperCase();
-                                      if (isNaN(cont)) {
+                                      if (isNaN(Number(cont))) {
                                              contador.contador = 0;
                                       } else {
                                              contador.contador = cont;
                                       }
-                                      if (isNaN(casas)) {
+                                      if (isNaN(Number(casas))) {
                                              contador.casas = 0;
                                       } else {
                                              contador.casas = casas;
@@ -161,7 +161,7 @@ routerCodigo.route('/new')
 
                   if (prefixo != "" && descricao != "") {
                              contador = mongoose.model('Contador');
-                             Contador = new contador();
+                             var Contador = new Contador();
                              Contador.prefixo = prefixo.toUpperCase();
                              Contador.descricao = descricao.toUpperCase();
                              Contador.contador = 0;
@@ -252,7 +252,7 @@ routerCodigo.route('/prefixo/:prefixo/prior')
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
-                                                contador.contador = parseInt(contador.contador - 1);
+                                                contador.contador = contador.contador - 1;
                                                 if (contador.contador < 0)
                                                           contador.contador = 0;
                                                 contador.save(function(err){
@@ -283,7 +283,7 @@ routerCodigo.route('/prefixo/:prefixo/inc')
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
-                                                contador.contador = parseInt(contador.contador + 1);
+                                                contador.contador = contador.contador + 1;
                                                 contador.save(function(err){
                                                           if (err)
                                                                    res.send(err);
@@ -308,7 +308,7 @@ routerCodigo.route('/prefixo/:prefixo/dec')
                                        if (err)
                                                 res.send(err);
                                        if (contador != null) {
-                                                contador.contador = parseInt(contador.contador - 1);
+                                                contador.contador = contador.contador - 1;
                                                 if (contador.contador < 0)
                                                           contador.contador = 0;
                                                 contador.save(function(err){

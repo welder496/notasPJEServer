@@ -1,3 +1,4 @@
+/* global __base */
 /*
  * Notas server with REST capability
  * Version: 1.0.0.20

@@ -1,3 +1,6 @@
+/* global emit 
+ * emit is a function of mongoose mapReduce 
+ */
 var express = require('express');
 var routerMapReduceNotasByTags = express.Router({mergeParams: true});
 var mongoose = require('mongoose');

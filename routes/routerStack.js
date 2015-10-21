@@ -7,7 +7,7 @@ routerStack.route('/new')
 
             .post(function(req,res){
                  stack = mongoose.model('Stack');
-                 var Stack = new stack();
+                 var Stack = new Stack();
                  Stack.descricao = "Owner";
                  Stack.pilha = [];
                  stack.findOne({descricao: "Owner"}, function(err, stack){
