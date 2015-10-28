@@ -2,9 +2,8 @@ var express = require('express');
 var routerNotasTags = express.Router({mergeParams: true});
 var mongoose = require('mongoose');
 var notas = require('../model/notas');
-var stack = require('localstack');
 
-var parseData = function(str){
+var parseData = function(str, stack){
       var firstopr = "";
       var substr = {};
       var opr = "";
@@ -60,8 +59,8 @@ routerNotasTags.route('/like*')
                  search.push(new RegExp(decodeURIComponent(itags.tags),'ig'));
            }
 
-             notas = mongoose.model('Notas');
-             notas.find({tags: {$in: search}}).sort({'criado_em': -1}).exec(function(err, notas) {
+           notas = mongoose.model('Notas');
+           notas.find({tags: {$in: search}}).sort({'criado_em': -1}).exec(function(err, notas) {
                  if (err)
                        res.send(err);
                  if (notas != null){
@@ -139,6 +138,7 @@ routerNotasTags.route('/and*')
 routerNotasTags.route('/search*')
 
       .get(function(req, res) {
+            var stack = require('localstack');
             var searchTags = req.query;
 
             if (searchTags == "" || typeof(searchTags) == "undefined") {
@@ -154,15 +154,14 @@ routerNotasTags.route('/search*')
                        }
                  });
                  stack.reverse();
+                 stack.stack(function(data){
+                       console.log(data);
+                 });
             }
-
-            stack.stack(function(data){
-                  console.log(data);
-            });
 
             //Mount commands for mongoDB search....
             var str = {};
-            str = parseData(str);
+            str = parseData(str,stack);
 
             notas = mongoose.model('Notas');
             notas.find(str).sort({'criado_em': -1}).exec(function(err, notas) {
@@ -170,8 +169,24 @@ routerNotasTags.route('/search*')
                        res.send(err);
                  if (notas != null){
                        res.json(notas);
-                 } else {
-                       res.json({message:"Notas não foram encontradas!!"});
+                 }
+            });
+      });
+
+/*
+ *   É um teste de construção remota de consulta devido a natureza da execução do node: sem threading.
+ */
+routerNotasTags.route('/command')
+
+      .post(function(req, res){
+            var str = req.body.search;
+            notas = mongoose.model('Notas');
+            console.log(str);
+            notas.find(str).sort({'criado_em': -1}).exec(function(err, notas) {
+                 if (err)
+                       res.send(err);
+                 if (notas != null){
+                       res.json(notas);
                  }
             });
       });

@@ -1,5 +1,5 @@
-/* global emit 
- * emit is a function of mongoose mapReduce 
+/* global emit
+ * emit is a function of mongoose mapReduce
  */
 var express = require('express');
 var routerMapReduceNotasByTags = express.Router({mergeParams: true});
@@ -31,7 +31,7 @@ routerMapReduceNotasByTags.route('/Tags')
          .get(function(req, res){
                    var Notas = mongoose.model('Notas');
                    Notas.mapReduce(Tags, function(err, model, stats){
-                             model.find().where('value').gte(3).sort({value: -1}).exec(function(err, notas){
+                             model.find().where('value').gte(6).sort({value: -1}).exec(function(err, notas){
                                       if (err)
                                                 res.send(err);
                                       res.json(notas);
