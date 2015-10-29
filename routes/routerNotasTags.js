@@ -2,41 +2,40 @@ var express = require('express');
 var routerNotasTags = express.Router({mergeParams: true});
 var mongoose = require('mongoose');
 var notas = require('../model/notas');
+var stack = require('localstack');
 
-var parseData = function(str, stack){
-      var firstopr = "";
-      var substr = {};
+var innerParser = function(obj) {
       var opr = "";
       while (! stack.isEmpty()) {
-            stack.pop(function(data){
-                 if (data.indexOf('$') != -1) {
-                       if (firstopr == "") {
-                            firstopr = data;
-                            str[firstopr] = [];
-                       } else {
-                            opr = data;
-                            substr[opr] = [];
-                            str[firstopr].push(substr);
-                       }
-                       opr=data;
+           stack.pop(function(data){
+                 opr = data;
+                 if (opr.indexOf('$') != -1) {
+                       var elements = [];
+                       var temp = {};
+                       temp[opr] = [];
+                       temp[opr] = innerParser(elements);
+                       return obj.push(temp);
                  } else {
-                       stack.push(data,function(data){});
-                       stack.pop(function(data){
-                             var value = data;
-                             if (value.indexOf('$') == -1) {
-                                  if (opr == firstopr)
-                                       str[firstopr].push({tags: {$regex: new RegExp(value,'ig')}});
-                                  else
-                                       substr[opr].push({tags: {$regex: new RegExp(value,'ig')}});
-                             } else {
-                                  stack.push(value,function(data){});
-                                  return;
-                             }
-                       });
+                       var temp = {tags : {$regex : new RegExp(opr,'ig')}};
+                       obj.push(temp);
                  }
            });
       }
-      return str;
+      return obj;
+}
+
+var parseData = function(obj){
+      var opr = ""
+      if (! stack.isEmpty()){
+            stack.pop(function(data){
+                 opr = data;
+                 obj[opr] = [];
+            });
+      }
+
+      var elements = [];
+      obj[opr] = innerParser(elements);
+      return obj;
 }
 
 /*
@@ -138,7 +137,6 @@ routerNotasTags.route('/and*')
 routerNotasTags.route('/search*')
 
       .get(function(req, res) {
-            var stack = require('localstack');
             var searchTags = req.query;
 
             if (searchTags == "" || typeof(searchTags) == "undefined") {
@@ -154,35 +152,14 @@ routerNotasTags.route('/search*')
                        }
                  });
                  stack.reverse();
-                 stack.stack(function(data){
-                       console.log(data);
-                 });
             }
 
             //Mount commands for mongoDB search....
-            var str = {};
-            str = parseData(str,stack);
+            var obj = {};
+            obj = parseData(obj);
 
             notas = mongoose.model('Notas');
-            notas.find(str).sort({'criado_em': -1}).exec(function(err, notas) {
-                 if (err)
-                       res.send(err);
-                 if (notas != null){
-                       res.json(notas);
-                 }
-            });
-      });
-
-/*
- *   É um teste de construção remota de consulta devido a natureza da execução do node: sem threading.
- */
-routerNotasTags.route('/command')
-
-      .post(function(req, res){
-            var str = req.body.search;
-            notas = mongoose.model('Notas');
-            console.log(str);
-            notas.find(str).sort({'criado_em': -1}).exec(function(err, notas) {
+            notas.find(obj).sort({'criado_em': -1}).exec(function(err, notas) {
                  if (err)
                        res.send(err);
                  if (notas != null){

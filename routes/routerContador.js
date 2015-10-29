@@ -161,7 +161,7 @@ routerCodigo.route('/new')
 
                   if (prefixo != "" && descricao != "") {
                              contador = mongoose.model('Contador');
-                             var Contador = new Contador();
+                             var Contador = new contador();
                              Contador.prefixo = prefixo.toUpperCase();
                              Contador.descricao = descricao.toUpperCase();
                              Contador.contador = 0;

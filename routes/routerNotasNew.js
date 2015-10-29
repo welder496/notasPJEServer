@@ -11,7 +11,7 @@ routerNotasNew.route('/')
      .post(function(req, res) {
              notas = mongoose.model('Notas');
              if (req.body.hasOwnProperty('codigo')){
-                   var Notas = new Notas();
+                   var Notas = new notas();
 
                    Notas.codigo = req.body.codigo.toUpperCase().trim();
                    Notas.nota = decodeURIComponent(req.body.nota);

@@ -45,7 +45,7 @@ routerFuncionalidade.route('/descricao/:descricao')
                           res.send(err);
                    if (funcionalidade == null) {
                           funcionalidade = mongoose.model('Funcionalidade');
-                          var Funcionalidade = new Funcionalidade();
+                          var Funcionalidade = new funcionalidade();
                           Funcionalidade.descricao = descricao;
                           Funcionalidade.save(function(err){
                                 if (err)
@@ -228,7 +228,7 @@ routerFuncionalidade.route('/new')
       .post(function(req,res){
             var funcionalidade = mongoose.model('Funcionalidade');
             if (req.body.hasOwnProperty('descricao')) {
-                   var Funcionalidade = new Funcionalidade();
+                   var Funcionalidade = new funcionalidade();
                    Funcionalidade.descricao = decodeURIComponent(req.body.descricao);
                    var subTipos = decodeURIComponent(req.body.subtipo);
                    if (typeof(subTipos) == "string") {
