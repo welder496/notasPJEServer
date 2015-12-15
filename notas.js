@@ -1,6 +1,6 @@
 /* global __base */
 /*
- * Notas server with REST capability
+ * Notas PJE server with REST capability
  * Version: 1.0.0.20
  */
 
@@ -13,7 +13,6 @@ var util = require("util");
 var notas = require('./model/notas');
 var routerPerfil = require('./routes/routerPerfil');
 var routerFuncionalidade = require('./routes/routerFuncionalidade');
-var routerStack = require('./routes/routerStack');
 var routerContador = require('./routes/routerContador');
 var routerNotasTags = require('./routes/routerNotasTags');
 var routerNotasCodigoCodigo = require('./routes/routerNotasCodigoCodigo');
@@ -52,7 +51,7 @@ mongoose.connect('mongodb://localhost/Notas');
  */
 
 var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', 'cnj.jus.br');
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
 
@@ -85,7 +84,6 @@ app.use('/notas/notas/first',routerNotasFirst);
 app.use('/notas/notas/like',routerNotasLike);
 app.use('/notas/notas/codigo/like',routerNotasCodigoLike);
 app.use('/notas/mapReduce',routerMapReduceNotasByTags);
-app.use('/notas/stack',routerStack);
 app.use('/arquivos',express.static(docs));
 /*
  * Generic access to assess the application!!

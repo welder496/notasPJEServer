@@ -1,5 +1,5 @@
 {
-  "name": "notasServer",
+  "name": "notasPJEServer",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -15,8 +15,16 @@
     "jade": "~1.9.2",
     "localstack": "^1.0.0",
     "mongoose": "~3.6.13",
-    "morgan": "~1.5.1",
     "multer": "^0.1.8",
     "serve-favicon": "~2.2.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.7.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-copy": "^0.8.2",
+    "grunt-contrib-nodeunit": "^0.4.1",
+    "grunt-nodemon": "^0.4.1",
+    "grunt-ssh": "^0.12.8"
   }
 }
