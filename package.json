@@ -24,7 +24,9 @@
     "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-nodeunit": "^0.4.1",
+    "grunt-karma": "^0.12.1",
     "grunt-nodemon": "^0.4.1",
-    "grunt-ssh": "^0.12.8"
+    "grunt-ssh": "^0.12.8",
+    "karma": "^0.13.19"
   }
 }
