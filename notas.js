@@ -89,7 +89,7 @@ app.use('/arquivos',express.static(docs));
  * Generic access to assess the application!!
  */
 router.get('/', function(req, res){
-   res.json({message: 'Aplicação notasPJEServer está funcionando!!'});
+      res.json({message: 'Aplicação notasPJEServer está funcionando!!'});
 });
 
 module.exports = app;
