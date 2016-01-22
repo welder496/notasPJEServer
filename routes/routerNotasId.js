@@ -44,14 +44,24 @@ routerNotasId.route('/:nota_id')
                           });
 
                           notas.tags = decodeURIComponent(req.body.tags);
+                          var tagsOk = false;
+                          if (notas.tags[0] !== "undefined") {
+                                 var tags = notas.tags[0].split(',');
+                                 if (tags !== "undefined") {
+                                      tagsOk = true;
+                                      tags.forEach(function(value){
+                                           tagsOk = tagsOk && (value !== "");
+                                      });
+                                 }
+                          }
 
                           notas.versao.push(parseInt(req.body.versao)+1);
                           notas.versao.shift();
 
-                          if (notas.codigo != "" && notas.nota != "undefined" && notas.tags != "") {
+                          if (notas.codigo !== "" && notas.nota !== "undefined" && tagsOk !== false) {
 
                                        if (parseInt(req.body.versao) >= notas.__v) {
-                                             notas.save(function(err) {
+                                              notas.save(function(err) {
                                                    if (err)
                                                          res.send(err);
                                                    if (notas.arquivos.length > 0) {
@@ -80,32 +90,32 @@ routerNotasId.route('/:nota_id')
             });
     })
 
-    .delete(function(req, res) {
-             notas = mongoose.model('Notas');
-             notas.remove({_id: req.params.nota_id}, function(err, notas) {
-                   if (err)
-                        res.send(err);
-                   if (notas != null) {
-                          if (fs.existsSync(docs)){
-                                if (fs.existsSync(docs+'/'+notas._id) && notas._id!=""){
-                                      fs.readdirSync(docs+'/'+notas._id).forEach(function(file,index){
-                                             var currentPath=docs+'/'+notas._id+'/'+file;
-                                             if (!fs.lstatSync(currentPath).isDirectory()){
-                                                   fs.unlinkSync(currentPath);
-                                             }
-                                      });
-                                      fs.isEmpty(docs+'/'+notas._id, function(empty){
-                                             if (empty)
-                                                   fs.rmdirSync(docs+'/'+notas._id);
-                                      });
-                                }
-                          }
-                          res.json({message: "Nota excluída com sucesso!!" });
-                   } else {
-                          res.json({message: "Não foi possível excluir a Nota!!"});
-                   }
+      .delete(function(req, res) {
+           notas = mongoose.model('Notas');
+           notas.remove({_id: req.params.nota_id}, function(err, notas) {
+                 if (err)
+                       res.send(err);
+                 if (notas) {
+                       if (fs.existsSync(docs)){
+                             if (fs.existsSync(docs+'/'+notas._id) && notas._id!=""){
+                                  fs.readdirSync(docs+'/'+notas._id).forEach(function(file,index){
+                                        var currentPath=docs+'/'+notas._id+'/'+file;
+                                        if (!fs.lstatSync(currentPath).isDirectory()){
+                                              fs.unlinkSync(currentPath);
+                                        }
+                                  });
+                                  fs.isEmpty(docs+'/'+notas._id, function(empty){
+                                        if (empty)
+                                             fs.rmdirSync(docs+'/'+notas._id);
+                                  });
+                            }
+                       }
+                       res.json({message: "Nota excluída com sucesso!!" });
+                 } else {
+                       res.json({message: "Não existe a Nota a ser excluída!!"});
+                 }
             });
-    });
+      });
 
 
 module.exports = routerNotasId;

@@ -131,14 +131,23 @@ module.exports = function(grunt) {
                  ignoreErrors: true
             }
        }
-    }
+    },
+    nodeunit: {
+        all: ['tests/**/*test.js','tests/**/*Test.js'],
+        options: {
+            reporter: 'junit',
+            reporterOptions: {
+                output: 'testsOutput'
+            }
+         }
+  }
   });
 
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-ssh');
-  grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
   grunt.registerTask('default',['nodemon']);
 
@@ -157,4 +166,5 @@ module.exports = function(grunt) {
 
   grunt.registerTask('restore', 'reset documents',['sshexec:restoreDocs']);
 
+  grunt.registerTask('test','unit tests',['nodeunit']);
 };

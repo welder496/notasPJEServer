@@ -27,7 +27,9 @@ routerNotasCodigoCodigo.route('/:codigo')
        .put(function(req, res) {
 
              notas = mongoose.model('Notas');
-             notas.findOne({codigo:req.params.codigo}, function(err, notas){
+             var codigo = req.params.codigo.toUpperCase().trim();
+
+             notas.findOne({codigo:codigo}, function(err, notas){
                    if (notas == null){
                          res.json({message: "A nota não foi encontrada!!"});
                    } else {
@@ -44,11 +46,21 @@ routerNotasCodigoCodigo.route('/:codigo')
                           });
 
                           notas.tags = decodeURIComponent(req.body.tags);
+                          var tagsOk = false;
+                          if (notas.tags[0] !== "undefined") {
+                                 var tags = notas.tags[0].split(',');
+                                 if (tags !== "undefined") {
+                                      tagsOk = true;
+                                      tags.forEach(function(value){
+                                           tagsOk = tagsOk && (value !== "");
+                                      });
+                                 }
+                          }
 
                           notas.versao.push(parseInt(req.body.versao)+1);
                           notas.versao.shift();
 
-                          if (notas.codigo != "" && notas.nota != "undefined" && notas.tags != "") {
+                          if (notas.codigo !== "" && notas.nota !== "undefined" && tagsOk !== false) {
 
                                        if (parseInt(req.body.versao) >= notas.__v) {
                                             notas.save(function(err) {
@@ -69,7 +81,7 @@ routerNotasCodigoCodigo.route('/:codigo')
                                                           });
                                                    }
                                             });
-                                             res.json({message: 'Nota alterada com sucesso!'});
+                                             res.json({message: 'Nota alterada com sucesso!!'});
                                       } else {
                                              res.json({message: 'A nota está sendo alterada por outro usuário. Tente novamente mais tarde...!!'});
                                       }

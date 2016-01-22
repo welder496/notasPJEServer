@@ -46,7 +46,6 @@ routerNotasTags.route('/like*')
 
       .get(function(req, res) {
            var itags = req.query;
-
            var search = [];
 
            if (itags.tags instanceof Array) {
