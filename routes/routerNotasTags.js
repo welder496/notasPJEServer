@@ -4,6 +4,30 @@ var mongoose = require('mongoose');
 var notas = require('../model/notas');
 var stack = require('localstack');
 
+var specialChars = ['(',')','[',']'];
+
+/*
+ * Do not delete this function... MongoDB needs it to build explicitily an regular expression!!
+ */
+var substitution = function(str){
+      for (var i=0; i < specialChars.length; i++){
+            var pos = str.indexOf(specialChars[i]);
+            if (pos !== -1){
+                var strtemp="";
+                for (var j=0; j<str.length; j++){
+                    if (j == pos){
+                      strtemp=strtemp+"\\"+str[j];
+                    } else {
+                      strtemp=strtemp+str[j];
+                    }
+                }
+                str = strtemp;
+           }
+      }
+      strtemp = str;
+      return strtemp;
+};
+
 var innerParser = function(obj) {
       var opr = "";
       while (! stack.isEmpty()) {
@@ -51,10 +75,14 @@ routerNotasTags.route('/like*')
            if (itags.tags instanceof Array) {
                  var size = Object.keys(itags.tags).length;
                  for (var i=0; i < size; i++){
-                       search.push(new RegExp(decodeURIComponent(itags.tags[i]),'ig'));
+                       var regtext = decodeURIComponent(itags.tags[i].replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\.\s\>\:\(\)\[\]]+/g,'_').trim());
+                       var newregexp = substitution(regtext);
+                       search.push(new RegExp(regtext,'ig'));
                  }
            } else {
-                 search.push(new RegExp(decodeURIComponent(itags.tags),'ig'));
+                 var regtext = decodeURIComponent(itags.tags.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\.\s\>\:\(\)\[\]]+/g,'_').trim());
+                 var newregexp = substitution(regtext);
+                 search.push(new RegExp(regtext,'ig'));
            }
 
            notas = mongoose.model('Notas');
@@ -83,10 +111,14 @@ routerNotasTags.route('/or*')
            if (itags.tags instanceof Array) {
                  var size = Object.keys(itags.tags).length;
                  for (var i=0; i < size; i++){
-                       search.push({ tags :{ $regex: new RegExp(decodeURIComponent(itags.tags[i]),'ig')}});
+                       var regtext = decodeURIComponent(itags.tags[i].replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\.\s\>\:\(\)\[\]]+/g,'_').trim());
+                       var newregexp = substitution(regtext);
+                       search.push({ tags :{ $regex: new RegExp(newregexp,'ig')}});
                  }
            } else {
-                 search.push({ tags: { $regex: new RegExp(decodeURIComponent(itags.tags),'ig')}});
+                 var regtext = decodeURIComponent(itags.tags.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\.\s\>\:\(\)\[\]]+/g,'_').trim());
+                 var newregexp = substitution(regtext);
+                 search.push({ tags: { $regex: new RegExp(newregexp,'ig')}});
            }
 
             notas = mongoose.model('Notas');
@@ -115,10 +147,14 @@ routerNotasTags.route('/and*')
            if (itags.tags instanceof Array) {
                  var size = Object.keys(itags.tags).length;
                  for (var i=0; i < size; i++){
-                       search.push({ tags :{ $regex: new RegExp(decodeURIComponent(itags.tags[i]),'ig')}});
+                       var regtext = decodeURIComponent(itags.tags[i].replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\.\s\>\:\(\)\[\]]+/g,'_').trim());
+                       var newregexp = substitution(regtext);
+                       search.push({ tags :{ $regex: new RegExp(newregexp,'ig')}});
                  }
            } else {
-                 search.push({ tags: { $regex: new RegExp(decodeURIComponent(itags.tags),'ig')}});
+                 var regtext = decodeURIComponent(itags.tags.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\.\s\>\:\(\)\[\]]+/g,'_').trim());
+                 var newregexp = substitution(regtext);
+                 search.push({ tags: { $regex: new RegExp(newregexp,'ig')}});
            }
 
             notas = mongoose.model('Notas');

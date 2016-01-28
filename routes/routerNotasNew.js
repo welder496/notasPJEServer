@@ -19,7 +19,7 @@ routerNotasNew.route('/')
                  var files = req.files;
                  var fileKeys = Object.keys(req.files);
                  fileKeys.forEach(function(key){
-                       var arquivo = files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-()\[\]\.]+/g,'_');
+                       var arquivo = files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\(\)\[\]\.]+/g,'_');
                        if (arquivo.substring(arquivo.lastIndexOf(".")).toLowerCase() != '.js')
                             if (Notas.arquivos.indexOf(arquivo) == -1)
                                   Notas.arquivos.push(arquivo);
@@ -29,6 +29,16 @@ routerNotasNew.route('/')
                  var tagsOk = false;
                  if (Notas.tags[0] !== "undefined") {
                        var tags = Notas.tags[0].split(',');
+                       var newTags = "";
+                       tags.forEach(function(value){
+                             var temp = value.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\(\)\[\]\.\s\>\:]+/g,'_');
+                             if (temp.indexOf('_') === -1) {
+                                  newTags = newTags + temp+",";
+                             }
+                       });
+                       newTags = newTags.substring(0,(newTags.length -1));
+                       Notas.tags[0] = newTags;
+                       tags = Notas.tags[0].split(',');
                        if (tags !== "undefined") {
                              tagsOk = true;
                              tags.forEach(function(value){

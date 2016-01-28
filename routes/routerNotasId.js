@@ -37,7 +37,7 @@ routerNotasId.route('/:nota_id')
                           var files = req.files;
                           var fileKeys = Object.keys(req.files);
                           fileKeys.forEach(function(key){
-                                var arquivo = files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-()\[\]\.]+/g,'_');
+                                var arquivo = files[key].originalname.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\(\)\[\]\.]+/g,'_');
                                 if (arquivo.substring(arquivo.lastIndexOf(".")).toLowerCase() != '.js')
                                       if (notas.arquivos.indexOf(arquivo) == -1)
                                             notas.arquivos.push(arquivo);
@@ -46,21 +46,38 @@ routerNotasId.route('/:nota_id')
                           notas.tags = decodeURIComponent(req.body.tags);
                           var tagsOk = false;
                           if (notas.tags[0] !== "undefined") {
-                                 var tags = notas.tags[0].split(',');
-                                 if (tags !== "undefined") {
+                                var tags = notas.tags[0].split(',');
+                                var newTags = "";
+                                tags.forEach(function(value){
+                                        var temp = value.replace(/[^a-z\u00C0-\u00ffA-Z0-9\-\(\)\[\]\.\s\>\:]+/g,'_');
+                                        if (temp.indexOf('_') === -1) {
+                                             newTags = newTags + temp+",";
+                                        }
+                                });
+                                newTags = newTags.substring(0,(newTags.length -1));
+                                notas.tags[0] = newTags;
+                                tags = notas.tags[0].split(',');
+                                if (tags !== "undefined") {
                                       tagsOk = true;
                                       tags.forEach(function(value){
                                            tagsOk = tagsOk && (value !== "");
                                       });
-                                 }
+                                }
+                           }
+
+                          var versao = req.body.versao;
+                          if (versao === "undefined"){
+                             versao = 0;
+                          } else {
+                             versao = parseInt(req.body.versao);
                           }
 
-                          notas.versao.push(parseInt(req.body.versao)+1);
+                          notas.versao.push(versao+1);
                           notas.versao.shift();
 
                           if (notas.codigo !== "" && notas.nota !== "undefined" && tagsOk !== false) {
 
-                                       if (parseInt(req.body.versao) >= notas.__v) {
+                                       if (versao >= notas.__v) {
                                               notas.save(function(err) {
                                                    if (err)
                                                          res.send(err);

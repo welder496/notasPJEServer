@@ -75,7 +75,7 @@ app.use('/notas/contador',routerContador);
 app.use('/notas/notas/codigo',routerNotasCodigoCodigo);
 app.use('/notas/notas/id',routerNotasId);
 app.use('/notas/notas/:codigo',routerNotasParamCodigo);
-app.use('/notas/notas/Tags',routerNotasTags);
+app.use('/notas/notas/tags',routerNotasTags);
 app.use('/notas/notas/arquivos',routerNotasArquivos);
 app.use('/notas/notas/all',routerNotasAll);
 app.use('/notas/notas/:id',routerNotasParamId);
