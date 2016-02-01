@@ -24,7 +24,7 @@ module.exports = {
 
             var command = rest.post('http://'+host+":"+port+'/notas/contador/new',
                  {
-                           data: contador
+                       data: contador
                  })
                  .on('success', function(data,response){
                        test.equal(response.statusCode,200,"Status de resposta!!");
