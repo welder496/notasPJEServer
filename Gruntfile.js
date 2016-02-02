@@ -143,25 +143,6 @@ module.exports = function(grunt) {
                 output: 'testsOutput'
             }
          }
-    },
-    bump: {
-            options: {
-                  files: ['package.json'],
-                  updateConfigs: [],
-                  commit: true,
-                  commitMessage: 'Release v%VERSION%',
-                  commitFiles: ['package.json'],
-                  createTag: true,
-                  tagName: 'v%VERSION%',
-                  tagMessage: 'Version %VERSION%',
-                  push: true,
-                  pushTo: 'upstream',
-                  gitDescribeOptions: '--tags --always --abbrev=1 --dirty=-d',
-                  globalReplace: false,
-                  prereleaseName: false,
-                  metadata: '',
-                  regExp: false
-            }
     }
   });
 
@@ -170,7 +151,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-ssh');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
-  grunt.loadNpmTasks('grunt-bump');
 
   grunt.registerTask('default',['nodemon']);
 
@@ -191,5 +171,4 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test','unit tests',['nodeunit']);
 
-  grunt.registerTask('bump', 'control version of notasPJEServer',['bump']);
 };
