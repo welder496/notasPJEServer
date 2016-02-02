@@ -44,12 +44,15 @@ module.exports = function(grunt) {
                  {
                        cwd: '<%= nodeModules %>',
                        expand: true,
-                       src: [ '*/**','!grunt*/**'],
+                       src: [ '*/**','!grunt*/**','!restler*/**',
+                                        '!serve-favicon*/**',
+                                        '!nodeunit*/**',
+                                        '!jade*/**'],
                        dest: '<%= distNodeModules %>'
                  },
                  {
                        expand: true,
-                       src: ['*.js','!Grunt*'],
+                       src: ['*.js','!Grunt*','!karma*'],
                        dest: '<%= distDir %>'
                  }
            ]
