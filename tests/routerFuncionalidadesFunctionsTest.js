@@ -349,7 +349,276 @@ module.exports = {
             test.expect(3);
       },
 
-      deleteFuncionalidadeByDescricao: function(test){
+      newFuncionalidade: function(test){
+            var funcionalidade = {
+                  descricao: "Nova funcionalidade inserida",
+                  subtipo: ["SubtipoOne", "SubtipoTwo"]
+            };
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new',{
+                 data: funcionalidade
+            })
+           .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Funcionalidade cadastrada com sucesso!!","Funcionalidade incluída!!");
+                 test.done();
+           })
+           .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newRepeatedFuncionalidade: function(test){
+            var funcionalidade = {
+                  descricao: "Nova funcionalidade inserida",
+                  subtipo: ["SubtipoOne","SubtipoTwo"]
+            };
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new',{
+                 data: funcionalidade
+            })
+           .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Funcionalidade já está cadastrada!!","Funcionalidade já incluída!!");
+                 test.done();
+           })
+           .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newFuncionalidadeWithInvalidChars: function(test){
+            var funcionalidade = {
+                  descricao: encodeURIComponent("Funcionalidade com problema nos subtipos"),
+                  subtipo: [encodeURIComponent("Sub@@$%tipoOne"),
+                                encodeURIComponent("Sub!!!!§§§§§ tipoTwo")]
+            };
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new',{
+                 data: funcionalidade
+            })
+           .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Formato inválido para Funcionalidade!!","Funcionalidade inválida!!");
+                 test.done();
+           })
+           .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newFuncionalidadeWithoutSubTypes: function(test){
+            var funcionalidade = {
+                  descricao: encodeURIComponent("Funcionalidade sem subtipos")
+            };
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new',{
+                 data: funcionalidade
+            })
+           .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Funcionalidade cadastrada com sucesso!!","Funcionalidade inválida!!");
+                 test.done();
+           })
+           .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newFuncionalidadeWithValidSubTypes: function(test){
+            var funcionalidade = {
+                  descricao: encodeURIComponent("Funcionalidade com teste exaustivo"),
+                  subtipo : [encodeURIComponent('Subtipos-->Subtipo'), encodeURIComponent('Subtipos-->Pedido de cadastro')]
+            };
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new',{
+                 data: funcionalidade
+            })
+           .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Funcionalidade cadastrada com sucesso!!","Funcionalidade inválida!!");
+                 test.done();
+           })
+           .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newSubTypesForFuncionalidadeThatAlreadyExists: function(test){
+            var descricao = encodeURIComponent("Funcionalidade com teste exaustivo");
+            var subtipo = {subtipo:[encodeURIComponent('Subtipos-->TTTTT'), encodeURIComponent('Subtipos-->AAAAA')]};
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new/'+descricao+'/subtipo',{
+                 data: subtipo
+            })
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Subtipo de Funcionalidade adicionado com sucesso!!","Subtipos adicionados!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      updateSubTypesForSubTypesThatNotExists: function(test){
+            var descricao = encodeURIComponent("Funcionalidade com teste exaustivo");
+            var subtipo = encodeURIComponent('Subtipos-->TTTTT');
+            var newsubtipo = encodeURIComponent('Subtipos-->KKKKK');
+            var command = rest.put('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao+'/subtipo/'+subtipo+'/to/'+newsubtipo)
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Subtipo da Funcionalidade atualizado com sucesso!!","Subtipos adicionados!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      updateSubTypesForSubTypesThatAlreadyExists: function(test){
+            var descricao = encodeURIComponent("Funcionalidade com teste exaustivo");
+            var subtipo = encodeURIComponent('Subtipos-->TTTTT');
+            var newsubtipo = encodeURIComponent('Subtipos-->TTTTT');
+            var command = rest.put('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao+'/subtipo/'+subtipo+'/to/'+newsubtipo)
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Subtipo já existe!!","Subtipos já existe!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      updateSubTypesWithInvalidFuncionalidade: function(test){
+            var descricao = encodeURIComponent("Funcionalidad&¨263==___e com teste exaustivo");
+            var subtipo = encodeURIComponent('Subtipos-->TTTTT');
+            var newsubtipo = encodeURIComponent('Subtipos-->JJJJJ');
+            var command = rest.put('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao+'/subtipo/'+subtipo+'/to/'+newsubtipo)
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Não foi possível atualizar o subtipo da Funcionalidade!!","Subtipos já existe!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      updateSubTypesWithScriptInFuncionalidade: function(test){
+            var descricao = encodeURIComponent("Funcionalidade<script>http://localhost:8080/teste</script> com teste exaustivo");
+            var subtipo = encodeURIComponent('Subtipos-->TTTTT');
+            var newsubtipo = encodeURIComponent('Subtipos-->JJJJJ');
+            var command = rest.put('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao+'/subtipo/'+subtipo+'/to/'+newsubtipo)
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Não foi possível atualizar o subtipo da Funcionalidade!!","Subtipos já existe!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newSubTypesForInvalidFuncionalidade: function(test){
+            var descricao = encodeURIComponent("Funcionalida***de com teste ex<string>austivo");
+            var subtipo = {subtipo:[encodeURIComponent('Subtipos-->TTTTT'), encodeURIComponent('Subtipos-->AAAAA')]};
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new/'+descricao+'/subtipo',{
+                 data: subtipo
+            })
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Formato inválido para a descrição da Funcionalidade!!","Subtipos adicionados!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newInvalidSubTypesForFuncionalidade: function(test){
+            var descricao = encodeURIComponent("Funcionalidade com teste exaustivo");
+            var subtipo = {subtipo:[encodeURIComponent('Subti¨¨pos-->TTTTT'), encodeURIComponent('Sub###tipos-->AAAAA')]};
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new/'+descricao+'/subtipo',{
+                 data: subtipo
+            })
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Formato inválido para a descrição da Funcionalidade!!","Subtipos adicionados!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      newSubTypesWithScriptForFuncionalidade: function(test){
+            var descricao = encodeURIComponent("Funcionalidade com teste exaustivo");
+            var subtipo = {subtipo:[encodeURIComponent('Subti<script>location.href="www.google.com"</script>pos-->TTTTT'), encodeURIComponent('Subtipos-->AAAAA')]};
+            var command = rest.post('http://'+host+":"+port+'/notas/funcionalidade/new/'+descricao+'/subtipo',{
+                 data: subtipo
+            })
+            .on('success', function(data,response){
+                 test.equal(response.statusCode,200,"Status de resposta!!");
+                 test.equal(data.message,"Formato inválido para a descrição da Funcionalidade!!","Subtipos adicionados!!");
+                 test.done();
+            })
+            .on('error', function(err,response){
+                 test.ok(false,"Erro ao incluir Funcionalidades!!");
+                 test.done();
+            });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      deleteFuncionalidadeByDescricaoOne: function(test){
+            var descricao = encodeURIComponent("Teste de funcionalidade");
+            var command = rest.del('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao)
+                 .on('success', function(data,response){
+                      test.equal(response.statusCode,200,"Status de resposta!!");
+                      test.equal(data.message,"Funcionalidade excluída com sucesso!!","Funcionalidade excluída!!");
+                      test.done();
+                 })
+                 .on('error', function(err,response){
+                      test.ok(false,"Erro ao excluir Funcionalidades!!");
+                      test.done();
+                 });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      deleteFuncionalidadeByDescricaoTwo: function(test){
             var descricao = encodeURIComponent("Teste de alteração de descrição");
             var command = rest.del('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao)
                  .on('success', function(data,response){
@@ -365,8 +634,40 @@ module.exports = {
             test.expect(3);
       },
 
-      deleteFuncionalidadeByDescricao: function(test){
-            var descricao = encodeURIComponent("Teste de funcionalidade");
+      deleteFuncionalidadeByDescricaoThree: function(test){
+            var descricao = encodeURIComponent("Funcionalidade com teste exaustivo");
+            var command = rest.del('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao)
+                 .on('success', function(data,response){
+                      test.equal(response.statusCode,200,"Status de resposta!!");
+                      test.equal(data.message,"Funcionalidade excluída com sucesso!!","Funcionalidade excluída!!");
+                      test.done();
+                 })
+                 .on('error', function(err,response){
+                     test.ok(false,"Erro ao excluir Funcionalidades!!");
+                     test.done();
+                 });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      deleteFuncionalidadeByDescricaoFour: function(test){
+            var descricao = encodeURIComponent("Funcionalidade sem subtipos");
+            var command = rest.del('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao)
+                 .on('success', function(data,response){
+                      test.equal(response.statusCode,200,"Status de resposta!!");
+                      test.equal(data.message,"Funcionalidade excluída com sucesso!!","Funcionalidade excluída!!");
+                      test.done();
+                 })
+                 .on('error', function(err,response){
+                     test.ok(false,"Erro ao excluir Funcionalidades!!");
+                     test.done();
+                 });
+            test.throws(command);
+            test.expect(3);
+      },
+
+      deleteFuncionalidadeByDescricaoFive: function(test){
+            var descricao = encodeURIComponent("Nova funcionalidade inserida");
             var command = rest.del('http://'+host+":"+port+'/notas/funcionalidade/descricao/'+descricao)
                  .on('success', function(data,response){
                       test.equal(response.statusCode,200,"Status de resposta!!");
