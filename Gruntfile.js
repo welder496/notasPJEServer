@@ -161,7 +161,7 @@ module.exports = function(grunt) {
                   }
            },
            'git-commit':{
-                  command: 'git --no-pager commit -m "versão <%= pkg.version %>"',
+                  command: 'git --no-pager commit -m "notasPJEServer versão <%= pkg.version %>"',
                   options: {
                       stdout: true,
                       stderr: true
