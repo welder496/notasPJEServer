@@ -143,6 +143,14 @@ module.exports = function(grunt) {
                 output: 'testsOutput'
             }
          }
+    },
+    bumpup: {
+         options: {
+              updateProps: {
+                 pkg: 'package.json'
+              }
+         },
+         file: 'package.json'
     }
   });
 
@@ -151,12 +159,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-ssh');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
+  grunt.loadNpmTasks('grunt-bumpup');
 
   grunt.registerTask('default',['nodemon']);
 
   grunt.registerTask('run', ['nodemon']);
 
-  grunt.registerTask('build','builds notasPJEServer', ['clean','copy']);
+  grunt.registerTask('build','builds notasPJEServer', ['clean','copy','bumpup']);
 
   grunt.registerTask('deploy','sends app to the server', ['sshexec:stop','sshexec:backupDocs','sshexec:remove',
     'sshexec:make','sshexec:change','sftp:deploy','sshexec:restoreDocs','sshexec:start']);
@@ -170,5 +179,7 @@ module.exports = function(grunt) {
   grunt.registerTask('restore', 'reset documents',['sshexec:restoreDocs']);
 
   grunt.registerTask('test','unit tests',['nodeunit']);
+
+  grunt.registerTask('bumpup',['bumpup']);
 
 };
