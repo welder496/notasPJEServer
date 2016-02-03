@@ -196,7 +196,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('run', ['nodemon']);
 
-  grunt.registerTask('build','builds notasPJEServer', ['clean','copy','bumpup']);
+  grunt.registerTask('build','builds notasPJEServer', ['clean','copy','bumpup','shell']);
 
   grunt.registerTask('deploy','sends app to the server', ['sshexec:stop','sshexec:backupDocs','sshexec:remove',
     'sshexec:make','sshexec:change','sftp:deploy','sshexec:restoreDocs','sshexec:start']);
@@ -213,6 +213,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('version',['bumpup']);
 
-  grunt.registerTask('console',['shell']);
+  grunt.registerTask('tag',['shell']);
 
 };
