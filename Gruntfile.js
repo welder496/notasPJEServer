@@ -153,12 +153,34 @@ module.exports = function(grunt) {
          file: 'package.json'
     },
     shell: {
-            options: {
-                stderr: true
-            },
-            target: {
-                command: 'ls -l'
-            }
+           'git-add':{
+                  command: 'git --no-pager add .',
+                  options: {
+                      stdout: true,
+                      stderr: true
+                  }
+           },
+           'git-commit':{
+                  command: 'git --no-pager commit -m "versão <%= pkg.version %>"',
+                  options: {
+                      stdout: true,
+                      stderr: true
+                  }
+           },
+           'git-tag':{
+                  command: 'git --no-pager tag <%= pkg.version %>',
+                  options: {
+                      stdout: true,
+                      stderr: true
+                  }
+           },
+           'git-push':{
+                  command: 'git push notasPJEGitHubServer <%= pkg.version %>',
+                  options: {
+                      stdout: true,
+                      stderr: true
+                  }
+           }
     }
   });
 
