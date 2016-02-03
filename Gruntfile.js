@@ -151,6 +151,14 @@ module.exports = function(grunt) {
               }
          },
          file: 'package.json'
+    },
+    shell: {
+            options: {
+                stderr: true
+            },
+            target: {
+                command: 'ls -l'
+            }
     }
   });
 
@@ -160,6 +168,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-ssh');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-bumpup');
+  grunt.loadNpmTasks('grunt-shell');
 
   grunt.registerTask('default',['nodemon']);
 
@@ -180,6 +189,8 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test','unit tests',['nodeunit']);
 
-  grunt.registerTask('bumpup',['bumpup']);
+  grunt.registerTask('version',['bumpup']);
+
+  grunt.registerTask('console',['shell']);
 
 };

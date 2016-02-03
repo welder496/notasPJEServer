@@ -1,6 +1,6 @@
 {
   "name": "notasPJEServer",
-  "version": "1.2.9",
+  "version": "1.0.0",
   "private": true,
   "author": "Welder Maurício de Souza",
   "scripts": {
@@ -32,6 +32,7 @@
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-nodemon": "^0.4.1",
+    "grunt-shell": "^1.1.2",
     "grunt-ssh": "^0.12.8",
     "nodeunit": "^0.9.1",
     "restler": "^3.4.0"
