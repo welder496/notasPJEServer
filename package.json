@@ -34,6 +34,7 @@
     "grunt-nodemon": "^0.4.1",
     "grunt-shell": "^1.1.2",
     "grunt-ssh": "^0.12.8",
+    "morgan": "^1.6.1",
     "nodeunit": "^0.9.1",
     "restler": "^3.4.0"
   }

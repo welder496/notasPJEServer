@@ -29,6 +29,7 @@ var routerMapReduceNotasByTags = require('./routes/routerMapReduceNotasByTags');
 
 var express    = require('express');
 var app        = express();
+var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var path = require('path');
 
@@ -37,6 +38,8 @@ var docs = __base + '/documentos';
 var port = process.env.PORT || 12345;
 
 var router = express.Router();
+
+var accessLogger = fs.createWriteStream(__dirname+'/logAccess.log',{flags: 'a'});
 
 /*
  * Database connection
@@ -51,19 +54,18 @@ mongoose.connect('mongodb://localhost/Notas');
  */
 
 var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', 'cnj.jus.br');
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
-
-    // intercept OPTIONS method
-    if ('OPTIONS' == req.method) {
-      res.sendStatus(200);
-    }
-    else {
-      next();
-    }
+      res.header('Access-Control-Allow-Origin', 'cnj.jus.br');
+      res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
+      // intercept OPTIONS method
+      if ('OPTIONS' == req.method) {
+            res.sendStatus(200);
+      } else {
+            next();
+      }
 };
 
+app.use(morgan('combined',{stream: accessLogger}));
 app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

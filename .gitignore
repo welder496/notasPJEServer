@@ -1,3 +1,5 @@
+#Arquivos não serão carregados
+logAccess.log
 /dist
 /documentos
 /testsOutput
