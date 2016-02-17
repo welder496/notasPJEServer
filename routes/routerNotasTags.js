@@ -180,10 +180,14 @@ routerNotasTags.route('/search*')
                  Object.keys(searchTags).forEach(function(key){
                        if (searchTags[key] instanceof Array) {
                              searchTags[key].forEach(function(value){
-                                  stack.push(decodeURIComponent(value), function(data){});
+                                  var regtext = decodeURIComponent(value);
+                                  var newtext = substitution(regtext);
+                                  stack.push(newtext, function(data){});
                              });
                        } else {
-                             stack.push(decodeURIComponent(searchTags[key]),function(data){});
+                             var regtext = decodeURIComponent(searchTags[key]);
+                             var newtext = substitution(regtext);
+                             stack.push(decodeURIComponent(newtext),function(data){});
                        }
                  });
                  stack.reverse();

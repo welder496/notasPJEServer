@@ -32,24 +32,25 @@ var authenticate = function(req, res, next){
 };
 
 routerUsuario.get('/:nome', function(req,res){
-         var nome = decodeURIComponent(req.params.nome);
-         if (nome !== "" && nome !== "undefined") {
-               var usuario = mongoose.model('Usuario');
-               usuario.findOne({nome:nome}, function(err, usuario){
-                     if (err)
-                          res.send(err);
-                     if (usuario != null){
-                          res.json(usuario);
-                     } else {
-                          res.json({message: "Usuário não encontrado!!"});
-                     }
-               });
-         } else {
-               res.json({message: "Não foi possível encontrar o Usuário!!"});
-         }
+      var nome = decodeURIComponent(req.params.nome);
+      if (nome !== "" && nome !== "undefined") {
+            var usuario = mongoose.model('Usuario');
+            usuario.findOne({nome:nome}, function(err, usuario){
+                 if (err)
+                       res.send(err);
+                 if (usuario != null){
+                       res.json(usuario);
+                 } else {
+                       res.json({message: "Usuário não encontrado!!"});
+                 }
+            });
+      } else {
+            res.json({message: "Não foi possível encontrar o Usuário!!"});
+      }
 });
 
 routerUsuario.post('/login', authenticate, function(req, res, next){
+
 });
 
 routerUsuario.post('/logout', function(req, res){
@@ -86,64 +87,64 @@ routerUsuario.post('/new', function(req, res){
 });
 
 routerUsuario.put('/:nome', function(req, res){
-         var nome = decodeURIComponent(req.params.nome);
-         var novoNome = decodeURIComponent(req.body.nome);
-         var novaSenha = decodeURIComponent(req.body.senha);
-         var novoEmail = decodeURIComponent(req.body.email);
-         if ((nome !== "" && nome !== "undefined") &&
-             (novoNome !== "" && novoNome !== "undefined") &&
-             (novaSenha !== "" && novaSenha !== "undefined") &&
-             (novoEmail !== "" && novoEmail !== "undefined")){
-             var usuario = mongoose.model('Usuario');
-             usuario.findOne({nome:nome},function(err,usuario){
-                   if (err)
-                          res.send(err);
-                   if (usuario != null) {
-                          var novoUsuario = mongoose.model('Usuario');
-                          novoUsuario.findOne({nome: novoNome}, function(err,novoUsuario){
-                                 if (novoUsuario == null) {
-                                       usuario.nome = novoNome;
-                                       usuario.senha = novaSenha;
-                                       usuario.email = novoEmail;
-                                       usuario.save(function(err){
-                                             if (err)
-                                                res.send(err);
-                                       });
-                                       res.json({message: "Usuário alterado com sucesso!!"});
-                                 } else {
-                                       res.json({message: "Novo nome já está cadastrado!!"});
-                                 }
-                          });
-                   } else {
-                          res.json({message: "Usuário não está cadastrado!!"});
-                   }
-             });
-         } else {
-                res.json({message: "Não foi possível alterar o usuário"});
-         }
+      var nome = decodeURIComponent(req.params.nome);
+      var novoNome = decodeURIComponent(req.body.nome);
+      var novaSenha = decodeURIComponent(req.body.senha);
+      var novoEmail = decodeURIComponent(req.body.email);
+      if ((nome !== "" && nome !== "undefined") &&
+           (novoNome !== "" && novoNome !== "undefined") &&
+           (novaSenha !== "" && novaSenha !== "undefined") &&
+           (novoEmail !== "" && novoEmail !== "undefined")){
+           var usuario = mongoose.model('Usuario');
+           usuario.findOne({nome:nome},function(err,usuario){
+                 if (err)
+                       res.send(err);
+                 if (usuario != null) {
+                       var novoUsuario = mongoose.model('Usuario');
+                       novoUsuario.findOne({nome: novoNome}, function(err,novoUsuario){
+                            if (novoUsuario == null) {
+                                  usuario.nome = novoNome;
+                                  usuario.senha = novaSenha;
+                                  usuario.email = novoEmail;
+                                  usuario.save(function(err){
+                                        if (err)
+                                              res.send(err);
+                                  });
+                                  res.json({message: "Usuário alterado com sucesso!!"});
+                            } else {
+                                  res.json({message: "Novo nome já está cadastrado!!"});
+                            }
+                       });
+                 } else {
+                       res.json({message: "Usuário não está cadastrado!!"});
+                 }
+           });
+      } else {
+           res.json({message: "Não foi possível alterar o usuário"});
+      }
 });
 
 routerUsuario.delete('/:nome', function(req, res){
-         var nome = decodeURIComponent(req.params.nome);
-         if (nome !== "" && nome !== "undefined") {
-               var usuario = mongoose.model('Usuario');
-               usuario.findOne({nome:nome}, function(err, usuario){
-                     if (err)
-                         res.send(err);
-                     if (usuario != null) {
-                          usuario.remove(function(err, usuario){
-                                if (err)
-                                       res.send(err);
-                                if (usuario == null);
-                                       res.json({message: "Usuário excluído com sucesso!!"});
-                          });
-                     } else {
-                          res.json({message: "Usuário não está cadastrado!!"});
-                     }
-               });
-         } else {
-               res.json({message: "Não foi possível excluir o usuário!!"})
-         }
+      var nome = decodeURIComponent(req.params.nome);
+      if (nome !== "" && nome !== "undefined") {
+           var usuario = mongoose.model('Usuario');
+           usuario.findOne({nome:nome}, function(err, usuario){
+                 if (err)
+                       res.send(err);
+                 if (usuario != null) {
+                       usuario.remove(function(err, usuario){
+                             if (err)
+                                  res.send(err);
+                             if (usuario == null);
+                                  res.json({message: "Usuário excluído com sucesso!!"});
+                       });
+                 } else {
+                       res.json({message: "Usuário não está cadastrado!!"});
+                 }
+           });
+      } else {
+           res.json({message: "Não foi possível excluir o usuário!!"})
+      }
 });
 
 module.exports = routerUsuario;
