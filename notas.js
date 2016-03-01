@@ -38,7 +38,6 @@ var app        = express();
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var path = require('path');
-var auth = require('basic-auth');
 
 var docs = __base + '/documentos';
 
