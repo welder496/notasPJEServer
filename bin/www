@@ -5,7 +5,7 @@
  */
 
 var app = require('../notas');
-var debug = require('debug')('notasServer:server');
+var debug = require('debug')('notas:server');
 var http = require('http');
 
 /**

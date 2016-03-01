@@ -9,7 +9,12 @@ global.__base =  __dirname;
 var fs = require('extfs');
 var multer = require('multer');
 var util = require("util");
+var redis = require('redis');
+var client = redis.createClient();
+var unless = require('express-unless');
+var jwt = require('express-jwt');
 
+var utils = require('./routes/routerPassUtils');
 var notas = require('./model/notas');
 var routerPerfil = require('./routes/routerPerfil');
 var routerFuncionalidade = require('./routes/routerFuncionalidade');
@@ -33,6 +38,7 @@ var app        = express();
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var path = require('path');
+var auth = require('basic-auth');
 
 var docs = __base + '/documentos';
 
@@ -53,21 +59,40 @@ mongoose.connect('mongodb://localhost/Notas');
 /*
  * Configuring CORS(CROSS ORIGIN RESOURCE SHARING) for access REST routines
  */
-
 var allowCrossDomain = function(req, res, next) {
-      res.header('Access-Control-Allow-Origin', 'cnj.jus.br');
+      res.header('Access-Control-Allow-Origin', 'localhost');
       res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key');
-      // intercept OPTIONS method
-      if ('OPTIONS' == req.method) {
-            res.sendStatus(200);
+      res.header('Access-Control-Allow-Headers', 'Content-type,Accept,X-Access-Token,X-Key,Authorization');
+      if (utils.verify(req,res,next)) {
+            if ('OPTIONS' == req.method) {
+                 res.sendStatus(200);
+            } else {
+                 next();
+            }
       } else {
-            next();
+            res.sendStatus('401');
+            res.end();
       }
 };
 
-app.use(morgan('combined',{stream: accessLogger}));
+var jwtCheck = jwt({secret: 'teste'});
+jwtCheck.unless = unless;
+
+app.use(jwtCheck.unless({path: '/notas/usuario/login'}));
+app.use(utils.middleware().unless({path: '/notas/usuario/login'}));
+app.use(function(err, req, res, next){
+      if (err.name === 'UnauthorizedError'){
+            res.status(401).json({message: "Token inválido!!"});
+            res.end();
+      }
+});
 app.use(allowCrossDomain);
+
+morgan.token('remote-user', function(req, res) {
+       return req.user.username;
+});
+
+app.use(morgan('combined',{stream: accessLogger}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(multer({inMemory:true}));
@@ -90,7 +115,7 @@ app.use('/notas/mapReduce',routerMapReduceNotasByTags);
 app.use('/notas/usuario',routerUsuario);
 app.use('/arquivos',express.static(docs));
 /*
- * Generic access to assess the application!!
+ * Generic access to the application!!
  */
 router.get('/', function(req, res){
       res.json({message: 'Aplicação notasPJEServer está funcionando!!'});

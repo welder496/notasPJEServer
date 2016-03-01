@@ -1,12 +1,13 @@
 var express = require('express');
 var routerUsuario = express.Router({mergeParams: true});
 var mongoose = require('mongoose');
-var usuario = require('../model/usuarios');
+var user = require('../model/usuarios');
+var utils = require('./routerPassUtils');
 
-var authenticate = function(req, res, next){
+var authenticate = function(req, res, next) {
 
-      var nome = decodeURIComponent(req.body.nome);
-      var senha = decodeURIComponent(req.body.senha);
+      var nome = decodeURIComponent(req.body.username);
+      var senha = decodeURIComponent(req.body.password);
 
       if ((nome === "" || nome === "undefined") &&
          (senha ===  "" || senha === "undefined")) {
@@ -14,14 +15,14 @@ var authenticate = function(req, res, next){
       }
 
       process.nextTick(function(){
-            var usuario = mongoose.model('Usuario');
-            usuario.findOne({nome: nome}, function(err, usuario){
-                 if (err || !usuario) {
+            var user = mongoose.model('User');
+            user.findOne({username: nome}, function(err, user){
+                 if (err || !user) {
                        return res.json({message: "Nome e Senha inválidos!!"});
                  }
-                 usuario.compareSenha(senha, function(err, isMatch){
+                 user.compareSenha(senha, function(err, isMatch){
                        if (isMatch && !err){
-                           return res.json({message: "Usuário autenticado com sucesso!!"});
+                           utils.create(user, req, res, next);
                        } else {
                            return res.json({message: "Nome e Senha inválidos!!"});
                        }
@@ -34,12 +35,12 @@ var authenticate = function(req, res, next){
 routerUsuario.get('/:nome', function(req,res){
       var nome = decodeURIComponent(req.params.nome);
       if (nome !== "" && nome !== "undefined") {
-            var usuario = mongoose.model('Usuario');
-            usuario.findOne({nome:nome}, function(err, usuario){
+            var user = mongoose.model('User');
+            user.findOne({username:nome}, function(err, user){
                  if (err)
                        res.send(err);
-                 if (usuario != null){
-                       res.json(usuario);
+                 if (user != null){
+                       res.json(user);
                  } else {
                        res.json({message: "Usuário não encontrado!!"});
                  }
@@ -50,29 +51,34 @@ routerUsuario.get('/:nome', function(req,res){
 });
 
 routerUsuario.post('/login', authenticate, function(req, res, next){
-
+      return res.status(200).json(req.user);
 });
 
-routerUsuario.post('/logout', function(req, res){
-
+routerUsuario.post('/logout', function(req, res, next){
+     if (utils.expire(req.headers)){
+           delete req.user;
+           return res.json({message: "Usuário desconectado com sucesso!!"});
+     } else {
+           return res.json({message: "Não foi possível desconectar o usuário!!"});
+     }
 });
 
 routerUsuario.post('/new', function(req, res){
-      var nome = decodeURIComponent(req.body.nome);
-      var senha = decodeURIComponent(req.body.senha);
+      var nome = decodeURIComponent(req.body.username);
+      var senha = decodeURIComponent(req.body.password);
       var email = decodeURIComponent(req.body.email);
       if ((nome !== "" && nome !== "undefined") &&
              (senha !== "" && senha !== "undefined") &&
              (email !== "" && email !== "undefined")) {
-             var usuario = mongoose.model('Usuario');
-             usuario.findOne({nome: nome}, function(err, usuario){
-                 if (usuario == null) {
-                      var usuario = mongoose.model('Usuario');
-                      var Usuario = new usuario();
-                      Usuario.nome = nome;
-                      Usuario.senha = senha;
-                      Usuario.email = email;
-                      Usuario.save(function(err){
+             var user = mongoose.model('User');
+             user.findOne({username: nome}, function(err, user){
+                 if (user == null) {
+                      var user = mongoose.model('User');
+                      var User = new user();
+                      User.username = nome;
+                      User.password = senha;
+                      User.email = email;
+                      User.save(function(err){
                            if (err)
                                res.send(err);
                       });
@@ -88,25 +94,25 @@ routerUsuario.post('/new', function(req, res){
 
 routerUsuario.put('/:nome', function(req, res){
       var nome = decodeURIComponent(req.params.nome);
-      var novoNome = decodeURIComponent(req.body.nome);
-      var novaSenha = decodeURIComponent(req.body.senha);
+      var novoNome = decodeURIComponent(req.body.username);
+      var novaSenha = decodeURIComponent(req.body.password);
       var novoEmail = decodeURIComponent(req.body.email);
       if ((nome !== "" && nome !== "undefined") &&
            (novoNome !== "" && novoNome !== "undefined") &&
            (novaSenha !== "" && novaSenha !== "undefined") &&
            (novoEmail !== "" && novoEmail !== "undefined")){
-           var usuario = mongoose.model('Usuario');
-           usuario.findOne({nome:nome},function(err,usuario){
+           var user = mongoose.model('User');
+           user.findOne({username:nome},function(err,user){
                  if (err)
                        res.send(err);
-                 if (usuario != null) {
-                       var novoUsuario = mongoose.model('Usuario');
+                 if (user != null) {
+                       var novoUsuario = mongoose.model('User');
                        novoUsuario.findOne({nome: novoNome}, function(err,novoUsuario){
                             if (novoUsuario == null) {
-                                  usuario.nome = novoNome;
-                                  usuario.senha = novaSenha;
-                                  usuario.email = novoEmail;
-                                  usuario.save(function(err){
+                                  user.username = novoNome;
+                                  user.password = novaSenha;
+                                  user.email = novoEmail;
+                                  user.save(function(err){
                                         if (err)
                                               res.send(err);
                                   });
