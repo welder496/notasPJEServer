@@ -88,7 +88,13 @@ app.use(function(err, req, res, next){
 app.use(allowCrossDomain);
 
 morgan.token('remote-user', function(req, res) {
-       return req.user.username;
+       var text = "";
+       if (req.user === undefined) {
+            text = "Logout";
+       } else {
+            text = req.user.username;
+       }
+       return text;
 });
 
 app.use(morgan('combined',{stream: accessLogger}));
