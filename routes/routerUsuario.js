@@ -107,7 +107,7 @@ routerUsuario.put('/:nome', function(req, res){
                        res.send(err);
                  if (user != null) {
                        var novoUsuario = mongoose.model('User');
-                       novoUsuario.findOne({nome: novoNome}, function(err,novoUsuario){
+                       novoUsuario.findOne({username: novoNome}, function(err,novoUsuario){
                             if (novoUsuario == null) {
                                   user.username = novoNome;
                                   user.password = novaSenha;
@@ -133,8 +133,8 @@ routerUsuario.put('/:nome', function(req, res){
 routerUsuario.delete('/:nome', function(req, res){
       var nome = decodeURIComponent(req.params.nome);
       if (nome !== "" && nome !== "undefined") {
-           var usuario = mongoose.model('Usuario');
-           usuario.findOne({nome:nome}, function(err, usuario){
+           var usuario = mongoose.model('User');
+           usuario.findOne({username:nome}, function(err, usuario){
                  if (err)
                        res.send(err);
                  if (usuario != null) {
