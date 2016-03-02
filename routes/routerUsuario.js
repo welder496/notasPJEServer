@@ -105,22 +105,32 @@ routerUsuario.put('/:nome', function(req, res){
            user.findOne({username:nome},function(err,user){
                  if (err)
                        res.send(err);
-                 if (user != null) {
-                       var novoUsuario = mongoose.model('User');
-                       novoUsuario.findOne({username: novoNome}, function(err,novoUsuario){
-                            if (novoUsuario == null) {
-                                  user.username = novoNome;
-                                  user.password = novaSenha;
-                                  user.email = novoEmail;
-                                  user.save(function(err){
-                                        if (err)
-                                              res.send(err);
-                                  });
-                                  res.json({message: "Usuário alterado com sucesso!!"});
-                            } else {
-                                  res.json({message: "Novo nome já está cadastrado!!"});
-                            }
-                       });
+                 if (user !== null) {
+                       if (novoNome !== nome) {
+                             var novoUsuario = mongoose.model('User');
+                             novoUsuario.findOne({username: novoNome}, function(err,novoUsuario){
+                                  if (novoUsuario === null) {
+                                        user.username = novoNome;
+                                        user.password = novaSenha;
+                                        user.email = novoEmail;
+                                        user.save(function(err){
+                                              if (err)
+                                                    res.send(err);
+                                        });
+                                        res.json({message: "Usuário alterado com sucesso!!"});
+                                  } else {
+                                        res.json({message: "Novo nome já está cadastrado!!"});
+                                  }
+                             });
+                       } else {
+                             user.password = novaSenha;
+                             user.email = novoEmail;
+                             user.save(function(err){
+                                   if (err)
+                                        res.send(err);
+                             });
+                             res.json({message: "Usuário alterado com sucesso!!"});
+                       }
                  } else {
                        res.json({message: "Usuário não está cadastrado!!"});
                  }
