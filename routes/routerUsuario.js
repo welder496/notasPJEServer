@@ -5,7 +5,6 @@ var user = require('../model/usuarios');
 var utils = require('./routerPassUtils');
 
 var authenticate = function(req, res, next) {
-
       var nome = decodeURIComponent(req.body.username);
       var senha = decodeURIComponent(req.body.password);
 
@@ -32,6 +31,23 @@ var authenticate = function(req, res, next) {
 
 };
 
+routerUsuario.get('/all', function(req,res){
+      var user = mongoose.model('User');
+      user.find({}, function(err, user){
+           if (err)
+                 res.send(err);
+           if (user !== null){
+                 var names = [];
+                 for (var i=0; i < user.length; i++){
+                      names.push(user[i].username);
+                 }
+                 res.json(names);
+           } else {
+                 res.json({message: "Usuários não encontrados!!"});
+           }
+      });
+});
+
 routerUsuario.get('/:nome', function(req,res){
       var nome = decodeURIComponent(req.params.nome);
       if (nome !== "" && nome !== "undefined") {
@@ -39,7 +55,8 @@ routerUsuario.get('/:nome', function(req,res){
             user.findOne({username:nome}, function(err, user){
                  if (err)
                        res.send(err);
-                 if (user != null){
+                 if (user !== null){
+                       user.password = "";
                        res.json(user);
                  } else {
                        res.json({message: "Usuário não encontrado!!"});

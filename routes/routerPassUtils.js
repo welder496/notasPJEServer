@@ -2,7 +2,7 @@ var redis = require('redis');
 var client = redis.createClient();
 var jsonwebtoken = require('jsonwebtoken');
 var _ = require('lodash');
-var TOKEN_EXPIRATION=60;
+var TOKEN_EXPIRATION=5;
 var TOKEN_EXPIRATION_SEC = TOKEN_EXPIRATION * 60;
 
 module.exports.fetch = function(headers) {
